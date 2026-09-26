@@ -30,6 +30,7 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
+    "dress-collection-djm4.onrender.com",
 ]
 
 
