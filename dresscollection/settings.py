@@ -188,23 +188,54 @@ USE_TZ = True
 # STATIC FILES
 # =========================================================
 
+# =========================================================
+# STATIC FILES
+# =========================================================
+
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
 # =========================================================
-# MEDIA FILES
+# MEDIA / OBJECT STORAGE
 # =========================================================
 
-MEDIA_URL = "/media/"
+USE_S3 = os.getenv("USE_S3", "False").lower() == "true"
 
-MEDIA_ROOT = BASE_DIR / "media"
+if USE_S3:
+    STORAGES["default"] = {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    }
+
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-2")
+
+    AWS_S3_ADDRESSING_STYLE = "path"
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
+
+    # Keep the bucket private and generate temporary URLs
+    AWS_QUERYSTRING_AUTH = True
+
+    AWS_S3_FILE_OVERWRITE = False
+
+    MEDIA_URL = None
+    MEDIA_ROOT = None
+
+else:
+    STORAGES["default"] = {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    }
+
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = BASE_DIR / "media"
 
 
 # =========================================================

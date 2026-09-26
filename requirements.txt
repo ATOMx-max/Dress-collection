@@ -6,3 +6,4 @@ Pillow
 psycopg[binary]
 mysqlclient
 dj-database-url
+django-storages[boto3]
