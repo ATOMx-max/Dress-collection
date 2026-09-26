@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login | Dress Collection</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --dark: #111;
+            --dark-soft: #292929;
+            --text: #171717;
+            --muted: #777;
+            --border: #e5e5e5;
+            --bg: #f6f7f9;
+            --danger: #c62828;
+            --danger-bg: #fff0f0;
+            --success: #2e7d32;
+            --success-bg: #effaf1;
+            --warning: #8a6d1d;
+            --warning-bg: #fff8e1;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            color: var(--text);
+
+            background:
+                radial-gradient(
+                    circle at 8% 5%,
+                    rgba(17, 17, 17, 0.055),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 92% 12%,
+                    rgba(17, 17, 17, 0.04),
+                    transparent 28%
+                ),
+                var(--bg);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 35px 20px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* =========================
+           MAIN WRAPPER
+        ========================= */
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 455px;
+        }
+
+        /* =========================
+           BRAND
+        ========================= */
+
+        .brand {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .brand-icon {
+            width: 72px;
+            height: 72px;
+
+            margin: 0 auto 15px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 21px;
+
+            background: var(--dark);
+            color: white;
+
+            font-size: 34px;
+
+            box-shadow:
+                0 13px 30px rgba(0, 0, 0, 0.14);
+        }
+
+        .brand h1 {
+            margin-bottom: 6px;
+
+            font-size: 29px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+        }
+
+        .brand p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.94);
+
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            border-radius: 23px;
+
+            padding: 34px;
+
+            box-shadow:
+                0 20px 55px rgba(0, 0, 0, 0.08);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .card-heading {
+            margin-bottom: 25px;
+        }
+
+        .card-eyebrow {
+            display: inline-flex;
+
+            margin-bottom: 11px;
+            padding: 6px 10px;
+
+            border-radius: 999px;
+
+            background: #f0f0f0;
+            color: #555;
+
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+        }
+
+        .login-card h2 {
+            margin-bottom: 7px;
+
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .login-description {
+            color: var(--muted);
+
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        /* =========================
+           MESSAGES
+        ========================= */
+
+        .message,
+        .error,
+        .success,
+        .warning {
+            padding: 12px 13px;
+
+            border-radius: 11px;
+
+            font-size: 12px;
+            line-height: 1.5;
+
+            margin-bottom: 16px;
+        }
+
+        .success {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border: 1px solid #ffd0d0;
+        }
+
+        .warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+            border: 1px solid #ffe082;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            margin-bottom: 8px;
+
+            font-size: 13px;
+            font-weight: 750;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            height: 50px;
+
+            padding: 0 14px;
+
+            border: 1px solid #d8d8d8;
+            border-radius: 12px;
+
+            background: white;
+            color: #222;
+
+            outline: none;
+
+            font-family: inherit;
+            font-size: 15px;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+
+        .form-group input:focus {
+            border-color: #111;
+
+            box-shadow:
+                0 0 0 4px rgba(0, 0, 0, 0.055);
+
+            transform: translateY(-1px);
+        }
+
+        /* =========================
+           LOGIN BUTTON
+        ========================= */
+
+        .login-btn {
+            width: 100%;
+            height: 51px;
+
+            border: 1px solid var(--dark);
+            border-radius: 12px;
+
+            background: var(--dark);
+            color: white;
+
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 750;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.14);
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .login-btn:hover {
+            background: var(--dark-soft);
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 11px 25px rgba(0, 0, 0, 0.18);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.65;
+            cursor: wait;
+            transform: none;
+        }
+
+        /* =========================
+           REGISTER / ADMIN
+        ========================= */
+
+        .register-section {
+            text-align: center;
+
+            margin-top: 24px;
+            padding-top: 23px;
+
+            border-top: 1px solid #eeeeee;
+
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .register-section-text {
+            margin-bottom: 10px;
+        }
+
+        .register-btn {
+            min-height: 42px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 17px;
+
+            border: 1px solid #111;
+            border-radius: 10px;
+
+            background: white;
+            color: #111;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .register-btn:hover {
+            background: #111;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .admin-btn {
+            min-height: 36px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-top: 12px;
+            padding: 0 13px;
+
+            border: 1px solid #d8d8d8;
+            border-radius: 8px;
+
+            background: #f7f7f7;
+            color: #555;
+
+            font-size: 11px;
+            font-weight: 650;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .admin-btn:hover {
+            background: #111;
+            color: white;
+            border-color: #111;
+            transform: translateY(-1px);
+        }
+
+        /* =========================
+           BACK LINK
+        ========================= */
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-top: 20px;
+
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+
+            transition:
+                color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #111;
+            transform: translateY(-1px);
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            margin-top: 20px;
+
+            text-align: center;
+
+            color: #999;
+            font-size: 11px;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 500px) {
+            body {
+                padding: 20px 13px;
+                align-items: flex-start;
+            }
+
+            .login-wrapper {
+                margin-top: 12px;
+            }
+
+            .brand {
+                margin-bottom: 20px;
+            }
+
+            .brand-icon {
+                width: 62px;
+                height: 62px;
+
+                margin-bottom: 12px;
+
+                border-radius: 18px;
+                font-size: 29px;
+            }
+
+            .brand h1 {
+                font-size: 25px;
+            }
+
+            .brand p {
+                font-size: 12px;
+            }
+
+            .login-card {
+                padding: 25px 19px;
+                border-radius: 18px;
+            }
+
+            .card-eyebrow {
+                font-size: 8px;
+            }
+
+            .login-card h2 {
+                font-size: 21px;
+            }
+
+            .login-description {
+                font-size: 12px;
+            }
+
+            .form-group input {
+                height: 49px;
+                font-size: 16px;
+            }
+
+            .login-btn {
+                height: 50px;
+            }
+
+            .register-btn {
+                width: 100%;
+            }
+
+            .admin-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 360px) {
+            body {
+                padding: 14px 9px;
+            }
+
+            .login-wrapper {
+                margin-top: 4px;
+            }
+
+            .login-card {
+                padding: 22px 15px;
+            }
+
+            .brand h1 {
+                font-size: 23px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-wrapper">
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                👗
+            </div>
+
+            <h1>
+                Dress Collection
+            </h1>
+
+            <p>
+                Your Personal Dress Collection
+            </p>
+
+        </div>
+
+
+        <!-- LOGIN CARD -->
+
+        <div class="login-card">
+
+            <div class="card-heading">
+
+                <div class="card-eyebrow">
+                    Account Login
+                </div>
+
+                <h2>
+                    Welcome Back
+                </h2>
+
+                <p class="login-description">
+                    Login to manage your personal dress collection.
+                </p>
+
+            </div>
+
+
+            <!-- DJANGO MESSAGES -->
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="{{ message.tags }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+
+            <!-- LOGIN ERROR -->
+
+            {% if form.errors %}
+
+                <div class="error">
+
+                    ❌ Invalid username or password.
+
+                    <br>
+
+                    Please check your username and password
+                    and try again.
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- LOGIN FORM -->
+
+            <form
+                method="post"
+                action="{% url 'login' %}"
+                id="loginForm"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- USERNAME -->
+
+                <div class="form-group">
+
+                    <label for="id_username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="id_username"
+                        name="username"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required
+                        autofocus
+                    >
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="id_password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="id_password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- NEXT URL -->
+
+                {% if next %}
+
+                    <input
+                        type="hidden"
+                        name="next"
+                        value="{{ next }}"
+                    >
+
+                {% endif %}
+
+
+                <!-- LOGIN BUTTON -->
+
+                <button
+                    type="submit"
+                    class="login-btn"
+                    id="loginButton"
+                >
+                    Login →
+                </button>
+
+            </form>
+
+
+            <!-- CREATE NEW ACCOUNT + ADMIN -->
+
+            <div class="register-section">
+
+                <div class="register-section-text">
+                    Don't have an account?
+                </div>
+
+                <a
+                    href="{% url 'register' %}"
+                    class="register-btn"
+                >
+                    Create New Account →
+                </a>
+
+
+                <br>
+
+                <a
+                    href="/admin/"
+                    class="admin-btn"
+                >
+                    ⚙️ Admin Login
+                </a>
+
+            </div>
+
+
+            <!-- BACK TO WEBSITE -->
+
+            <a
+                href="{% url 'home' %}"
+                class="back-link"
+            >
+                ← Back to Website
+            </a>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+            Dress Collection © 2026
+        </div>
+
+    </div>
+
+
+    <script>
+        const loginForm =
+            document.getElementById("loginForm");
+
+        if (loginForm) {
+
+            loginForm.addEventListener(
+                "submit",
+                function () {
+
+                    const button =
+                        document.getElementById("loginButton");
+
+                    if (button) {
+                        button.disabled = true;
+                        button.textContent = "Logging in...";
+                    }
+
+                }
+            );
+
+        }
+    </script>
+
+</body>
+
+</html>

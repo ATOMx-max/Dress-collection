@@ -1,0 +1,325 @@
+{% extends "admin/base.html" %}
+
+{% block title %}
+    {{ title }} | Dress Collection
+{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin_dashboard' %}">
+        <span class="brand-icon">👗</span>
+        <span>Dress Collection</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<div class="custom-admin-nav">
+
+    <a href="{% url 'admin_dashboard' %}" class="admin-nav-btn">
+        <span>📊</span>
+        <span>Dashboard</span>
+    </a>
+
+    <a href="/" class="admin-nav-btn">
+        <span>🌐</span>
+        <span>View Website</span>
+    </a>
+
+</div>
+
+<style>
+
+/* =========================================================
+   DRESS COLLECTION — MODERN DJANGO ADMIN
+   ========================================================= */
+
+/* ---------- BRANDING ---------- */
+
+#site-name {
+    padding: 0 !important;
+}
+
+#site-name a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #ffffff !important;
+
+    font-size: 21px;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    letter-spacing: -0.3px;
+
+    transition: 0.2s ease;
+}
+
+#site-name a:hover {
+    color: #f1f5f9 !important;
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    border-radius: 10px;
+
+    font-size: 18px;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ---------- CUSTOM NAVIGATION ---------- */
+
+.custom-admin-nav {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin-right: 18px;
+}
+
+.admin-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 36px;
+
+    padding: 8px 14px;
+
+    border-radius: 10px;
+
+    color: #ffffff !important;
+
+    background: rgba(255, 255, 255, 0.10);
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    text-decoration: none !important;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.admin-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+
+    border-color: rgba(255, 255, 255, 0.25);
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 14px rgba(0, 0, 0, 0.12);
+}
+
+.admin-nav-btn:active {
+    transform: translateY(0);
+}
+
+
+/* ---------- GENERAL ADMIN POLISH ---------- */
+
+body {
+    background: #f6f7fb;
+}
+
+#header {
+    box-shadow:
+        0 2px 14px rgba(0, 0, 0, 0.10);
+
+    position: sticky;
+    top: 0;
+
+    z-index: 1000;
+}
+
+
+/* ---------- CONTENT ---------- */
+
+#content {
+    max-width: 1500px;
+    margin: 0 auto;
+
+    padding: 25px;
+}
+
+
+/* ---------- LINKS ---------- */
+
+a {
+    transition: 0.2s ease;
+}
+
+
+/* ---------- BUTTONS ---------- */
+
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input {
+    border-radius: 9px !important;
+
+    font-weight: 700 !important;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+    transform: translateY(-1px);
+}
+
+
+/* ---------- FORM FIELDS ---------- */
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="url"],
+textarea,
+select {
+    border-radius: 8px !important;
+}
+
+
+/* ---------- TABLES ---------- */
+
+#result_list {
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 4px 18px rgba(15, 23, 42, 0.06);
+}
+
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 700px) {
+
+    #site-name a {
+        font-size: 16px;
+
+        gap: 7px;
+    }
+
+    .brand-icon {
+        width: 30px;
+        height: 30px;
+
+        font-size: 16px;
+
+        border-radius: 8px;
+    }
+
+    .custom-admin-nav {
+        gap: 5px;
+
+        margin-right: 4px;
+    }
+
+    .admin-nav-btn {
+        min-height: 32px;
+
+        padding: 6px 8px;
+
+        border-radius: 8px;
+
+        font-size: 11px;
+
+        gap: 4px;
+    }
+
+    #content {
+        padding: 14px;
+    }
+
+}
+
+
+/* ---------- SMALL PHONES ---------- */
+
+@media (max-width: 430px) {
+
+    #site-name a {
+        font-size: 14px;
+    }
+
+    .brand-icon {
+        width: 27px;
+        height: 27px;
+
+        font-size: 14px;
+    }
+
+    .admin-nav-btn {
+        padding: 5px 6px;
+
+        font-size: 10px;
+    }
+
+    .admin-nav-btn span:first-child {
+        font-size: 12px;
+    }
+
+    #content {
+        padding: 10px;
+    }
+
+}
+
+
+/* ---------- VERY SMALL PHONES ---------- */
+
+@media (max-width: 350px) {
+
+    #site-name a {
+        font-size: 13px;
+    }
+
+    .brand-icon {
+        width: 25px;
+        height: 25px;
+
+        font-size: 13px;
+    }
+
+    .admin-nav-btn {
+        padding: 4px 5px;
+
+        font-size: 9px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

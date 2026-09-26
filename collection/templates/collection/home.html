@@ -1,0 +1,2813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dress Collection</title>
+
+
+    <style>
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+
+            background: #f7f7f8;
+            color: #171717;
+            line-height: 1.5;
+        }
+
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+
+        button {
+            cursor: pointer;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+
+            height: 74px;
+
+            padding: 0 6%;
+
+            background: rgba(255, 255, 255, 0.96);
+
+            border-bottom: 1px solid #eeeeee;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            position: sticky;
+            top: 0;
+
+            z-index: 1000;
+
+            backdrop-filter: blur(12px);
+        }
+
+
+        .logo {
+
+            text-decoration: none;
+
+            color: #111;
+
+            font-size: 23px;
+
+            font-weight: 700;
+
+            letter-spacing: -0.5px;
+        }
+
+
+        .nav-links {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 30px;
+        }
+
+
+        .nav-links a {
+
+            text-decoration: none;
+
+            color: #333;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            transition: 0.25s ease;
+        }
+
+
+        .nav-links a:hover {
+
+            color: #000;
+        }
+
+
+        .admin-btn {
+
+            background: #111;
+
+            color: #fff !important;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            transition: 0.25s ease !important;
+        }
+
+
+        .admin-btn:hover {
+
+            background: #333;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =====================================================
+           MOBILE MENU BUTTON
+        ===================================================== */
+
+        .menu-btn {
+
+            display: none;
+
+            border: none;
+
+            background: transparent;
+
+            color: #111;
+
+            font-size: 27px;
+
+            padding: 5px;
+        }
+
+
+        /* =====================================================
+           MOBILE MENU
+        ===================================================== */
+
+        .menu-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0, 0, 0, 0.45);
+
+            z-index: 1500;
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transition: 0.3s ease;
+        }
+
+
+        .menu-overlay.active {
+
+            opacity: 1;
+
+            visibility: visible;
+        }
+
+
+        .mobile-menu {
+
+            position: fixed;
+
+            top: 0;
+
+            right: -320px;
+
+            width: 300px;
+
+            height: 100vh;
+
+            background: #fff;
+
+            z-index: 2000;
+
+            padding: 25px;
+
+            box-shadow:
+                -10px 0 30px
+                rgba(0, 0, 0, 0.15);
+
+            transition: right 0.3s ease;
+        }
+
+
+        .mobile-menu.active {
+
+            right: 0;
+        }
+
+
+        .mobile-menu-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 35px;
+        }
+
+
+        .mobile-menu-header h2 {
+
+            font-size: 21px;
+        }
+
+
+        .close-btn {
+
+            border: none;
+
+            background: transparent;
+
+            font-size: 30px;
+
+            color: #111;
+        }
+
+
+        .mobile-menu a {
+
+            display: block;
+
+            padding: 15px 5px;
+
+            text-decoration: none;
+
+            color: #222;
+
+            border-bottom: 1px solid #eeeeee;
+
+            font-size: 16px;
+        }
+
+
+        .mobile-menu .mobile-admin {
+
+            margin-top: 20px;
+
+            background: #111;
+
+            color: #fff;
+
+            text-align: center;
+
+            border: none;
+
+            border-radius: 9px;
+        }
+
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .hero {
+
+            position: relative;
+
+            min-height: 570px;
+
+            overflow: hidden;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #181818,
+                    #3a3a3a
+                );
+
+            color: #fff;
+        }
+
+
+        /* =====================================================
+           HERO SLIDES
+        ===================================================== */
+
+        .hero-slides {
+
+            position: absolute;
+
+            inset: 0;
+
+            z-index: 0;
+        }
+
+
+        .hero-slide {
+
+            position: absolute;
+
+            inset: 0;
+
+            background-size: cover;
+
+            background-position: center;
+
+            background-repeat: no-repeat;
+
+            opacity: 0;
+
+            transform: scale(1.03);
+
+            transition:
+                opacity 1.2s ease,
+                transform 5s ease;
+        }
+
+
+        .hero-slide.active {
+
+            opacity: 1;
+
+            transform: scale(1);
+        }
+
+
+        .hero-slide::after {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.45),
+                    rgba(0, 0, 0, 0.58)
+                );
+        }
+
+
+        /* =====================================================
+           HERO FALLBACK
+        ===================================================== */
+
+        .hero.no-slides {
+
+            background:
+                radial-gradient(
+                    circle at top right,
+                    #555,
+                    #161616 60%
+                );
+        }
+
+
+        /* =====================================================
+           HERO CONTENT
+        ===================================================== */
+
+        .hero-content {
+
+            position: relative;
+
+            z-index: 5;
+
+            width: 92%;
+
+            max-width: 850px;
+
+            padding: 40px 20px;
+        }
+
+
+        .hero-small {
+
+            display: inline-block;
+
+            margin-bottom: 18px;
+
+            padding: 7px 13px;
+
+            border: 1px solid
+                rgba(255,255,255,0.35);
+
+            border-radius: 30px;
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            letter-spacing: 2px;
+
+            text-transform: uppercase;
+
+            background:
+                rgba(255,255,255,0.08);
+
+            backdrop-filter: blur(8px);
+        }
+
+
+        .hero-content h1 {
+
+            font-size:
+                clamp(42px, 7vw, 76px);
+
+            line-height: 1.05;
+
+            letter-spacing: -2px;
+
+            font-weight: 750;
+
+            margin-bottom: 18px;
+        }
+
+
+        .hero-content p {
+
+            max-width: 600px;
+
+            margin: 0 auto 30px;
+
+            font-size: 18px;
+
+            color:
+                rgba(255,255,255,0.9);
+        }
+
+
+        /* =====================================================
+           HERO SEARCH
+        ===================================================== */
+
+        .search-box {
+
+            width: 100%;
+
+            max-width: 570px;
+
+            margin: 0 auto;
+
+            display: flex;
+
+            background: #fff;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 15px 40px
+                rgba(0,0,0,0.25);
+        }
+
+
+        .search-box input {
+
+            flex: 1;
+
+            min-width: 0;
+
+            border: none;
+
+            outline: none;
+
+            padding: 16px 18px;
+
+            font-size: 15px;
+
+            color: #222;
+
+            background: #fff;
+        }
+
+
+        .search-box input::placeholder {
+
+            color: #888;
+        }
+
+
+        .search-box button {
+
+            border: none;
+
+            background: #111;
+
+            color: #fff;
+
+            padding: 0 25px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition: 0.25s ease;
+        }
+
+
+        .search-box button:hover {
+
+            background: #333;
+        }
+
+
+        /* =====================================================
+           SLIDER CONTROLS
+        ===================================================== */
+
+        .slider-arrow {
+
+            position: absolute;
+
+            z-index: 10;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 44px;
+
+            height: 44px;
+
+            border-radius: 50%;
+
+            border: 1px solid
+                rgba(255,255,255,0.35);
+
+            background:
+                rgba(0,0,0,0.25);
+
+            color: #fff;
+
+            font-size: 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            backdrop-filter: blur(8px);
+
+            transition: 0.25s ease;
+        }
+
+
+        .slider-arrow:hover {
+
+            background:
+                rgba(255,255,255,0.2);
+
+            transform:
+                translateY(-50%) scale(1.05);
+        }
+
+
+        .slider-prev {
+
+            left: 25px;
+        }
+
+
+        .slider-next {
+
+            right: 25px;
+        }
+
+
+        .slider-dots {
+
+            position: absolute;
+
+            z-index: 10;
+
+            bottom: 25px;
+
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+        }
+
+
+        .slider-dot {
+
+            width: 7px;
+
+            height: 7px;
+
+            padding: 0;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,0.5);
+
+            transition: 0.3s ease;
+        }
+
+
+        .slider-dot.active {
+
+            width: 25px;
+
+            border-radius: 10px;
+
+            background: #fff;
+        }
+
+
+        /* =====================================================
+           COLLECTION
+        ===================================================== */
+
+        .collection-section {
+
+            width: min(1200px, 92%);
+
+            margin: auto;
+
+            padding: 80px 0;
+        }
+
+
+        .section-title {
+
+            text-align: center;
+
+            margin-bottom: 40px;
+        }
+
+
+        .section-title h2 {
+
+            font-size: 38px;
+
+            letter-spacing: -1px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .section-title p {
+
+            color: #777;
+
+            font-size: 15px;
+        }
+
+
+        /* =====================================================
+           FILTER PANEL
+        ===================================================== */
+
+        .filters {
+
+            display: flex;
+
+            align-items: end;
+
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            gap: 14px;
+
+            padding: 20px;
+
+            margin-bottom: 45px;
+
+            background: #fff;
+
+            border: 1px solid #ededed;
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.04);
+        }
+
+
+        .filter-group {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 6px;
+        }
+
+
+        .filter-group label {
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            color: #555;
+        }
+
+
+        .filter-group select {
+
+            min-width: 160px;
+
+            padding: 11px 13px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            background: #fff;
+
+            color: #222;
+
+            outline: none;
+
+            font-size: 13px;
+
+            cursor: pointer;
+
+            transition: 0.2s ease;
+        }
+
+
+        .filter-group select:focus {
+
+            border-color: #111;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(0,0,0,0.06);
+        }
+
+
+        .reset-btn {
+
+            padding: 11px 18px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #111;
+
+            color: #fff;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            transition: 0.25s ease;
+        }
+
+
+        .reset-btn:hover {
+
+            background: #333;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =====================================================
+           DRESS GRID
+        ===================================================== */
+
+        .dress-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 25px;
+        }
+
+
+        .dress-link {
+
+            text-decoration: none;
+
+            color: inherit;
+
+            display: block;
+        }
+
+
+        /* =====================================================
+           DRESS CARD
+        ===================================================== */
+
+        .dress-card {
+
+            background: #fff;
+
+            border: 1px solid #eeeeee;
+
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 5px 18px
+                rgba(0,0,0,0.05);
+
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+
+
+        .dress-card:hover {
+
+            transform: translateY(-6px);
+
+            box-shadow:
+                0 14px 35px
+                rgba(0,0,0,0.10);
+        }
+
+
+        /* =====================================================
+           DRESS IMAGE
+        ===================================================== */
+
+        .dress-image-wrapper {
+
+            position: relative;
+
+            overflow: hidden;
+
+            background: #f1f1f1;
+        }
+
+
+        .dress-image {
+
+            width: 100%;
+
+            height: 350px;
+
+            display: block;
+
+            object-fit: cover;
+
+            transition:
+                transform 0.5s ease;
+        }
+
+
+        .dress-card:hover .dress-image {
+
+            transform: scale(1.04);
+        }
+
+
+        .favorite-form {
+            position: absolute;
+            top: 13px;
+            right: 13px;
+            z-index: 20;
+        }
+
+        .favorite-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.94);
+            color: #222;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+            transition: 0.25s ease;
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.08);
+            background: #fff;
+        }
+
+        .favorite-btn.active {
+            color: #e63946;
+        }
+
+        .collection-badge {
+
+            position: absolute;
+
+            top: 13px;
+
+            left: 13px;
+
+            padding: 6px 10px;
+
+            background:
+                rgba(255,255,255,0.92);
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+            backdrop-filter: blur(8px);
+        }
+
+
+        /* =====================================================
+           DRESS INFORMATION
+        ===================================================== */
+
+        .dress-info {
+
+            padding: 19px;
+        }
+
+
+        .dress-info h3 {
+
+            font-size: 19px;
+
+            line-height: 1.3;
+
+            margin-bottom: 7px;
+        }
+
+
+        .category {
+
+            color: #777;
+
+            font-size: 13px;
+
+            margin-bottom: 13px;
+        }
+
+
+        .dress-details {
+
+            display: flex;
+
+            gap: 7px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .detail {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            padding: 6px 9px;
+
+            background: #f5f5f5;
+
+            border-radius: 6px;
+
+            color: #555;
+
+            font-size: 11px;
+
+            font-weight: 500;
+        }
+
+
+        /* =====================================================
+           EMPTY / NO RESULTS
+        ===================================================== */
+
+        .empty-state {
+
+            grid-column: 1 / -1;
+
+            text-align: center;
+
+            padding: 70px 20px;
+
+            background: #fff;
+
+            border: 1px dashed #ddd;
+
+            border-radius: 14px;
+
+            color: #777;
+        }
+
+
+        .empty-state-icon {
+
+            font-size: 38px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .empty-state h3 {
+
+            color: #222;
+
+            font-size: 20px;
+
+            margin-bottom: 6px;
+        }
+
+
+        .no-results {
+
+            grid-column: 1 / -1;
+
+            text-align: center;
+
+            padding: 50px 20px;
+
+            color: #777;
+
+            display: none;
+        }
+
+
+        .no-results h3 {
+
+            color: #222;
+
+            margin-bottom: 6px;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+
+            margin-top: 20px;
+
+            padding: 35px 20px;
+
+            text-align: center;
+
+            background: #111;
+
+            color: #fff;
+        }
+
+
+        footer p {
+
+            font-size: 13px;
+
+            color: #aaa;
+        }
+
+
+        /* =====================================================
+           TABLET
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .dress-grid {
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+
+            .hero {
+
+                min-height: 530px;
+            }
+
+
+            .hero-content h1 {
+
+                font-size: 55px;
+            }
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+
+                height: 65px;
+
+                padding: 0 20px;
+            }
+
+
+            .logo {
+
+                font-size: 20px;
+            }
+
+
+            .nav-links {
+
+                display: none;
+            }
+
+
+            .menu-btn {
+
+                display: block;
+            }
+
+
+            .hero {
+
+                min-height: 520px;
+            }
+
+
+            .hero-content {
+
+                width: 94%;
+
+                padding: 30px 10px;
+            }
+
+
+            .hero-content h1 {
+
+                font-size: 42px;
+
+                letter-spacing: -1.5px;
+            }
+
+
+            .hero-content p {
+
+                font-size: 15px;
+
+                margin-bottom: 24px;
+            }
+
+
+            .hero-small {
+
+                font-size: 9px;
+
+                letter-spacing: 1.5px;
+            }
+
+
+            .search-box {
+
+                border-radius: 10px;
+            }
+
+
+            .search-box input {
+
+                padding: 14px;
+
+                font-size: 14px;
+            }
+
+
+            .search-box button {
+
+                padding: 0 17px;
+            }
+
+
+            .slider-arrow {
+
+                width: 38px;
+
+                height: 38px;
+
+                font-size: 18px;
+            }
+
+
+            .slider-prev {
+
+                left: 12px;
+            }
+
+
+            .slider-next {
+
+                right: 12px;
+            }
+
+
+            .slider-dots {
+
+                bottom: 18px;
+            }
+
+
+            .collection-section {
+
+                width: 92%;
+
+                padding: 60px 0;
+            }
+
+
+            .section-title {
+
+                margin-bottom: 30px;
+            }
+
+
+            .section-title h2 {
+
+                font-size: 30px;
+            }
+
+
+            .filters {
+
+                align-items: stretch;
+
+                flex-direction: column;
+
+                padding: 16px;
+
+                gap: 12px;
+            }
+
+
+            .filter-group select {
+
+                width: 100%;
+            }
+
+
+            .reset-btn {
+
+                width: 100%;
+            }
+
+
+            .dress-grid {
+
+                grid-template-columns: 1fr;
+
+                gap: 20px;
+            }
+
+
+            .dress-image {
+
+                height: 390px;
+            }
+
+
+            .mobile-menu {
+
+                width: 82%;
+            }
+        }
+
+
+        /* =====================================================
+           SMALL MOBILE
+        ===================================================== */
+
+        @media (max-width: 420px) {
+
+            .hero {
+
+                min-height: 500px;
+            }
+
+
+            .hero-content h1 {
+
+                font-size: 35px;
+            }
+
+
+            .hero-content p {
+
+                font-size: 14px;
+            }
+
+
+            .dress-image {
+
+                height: 350px;
+            }
+        }
+
+
+        /* =====================================================
+           FINAL MOBILE POLISH
+           Keeps the existing desktop design unchanged.
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            body {
+                overflow-x: hidden;
+            }
+
+            .navbar {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .logo {
+                max-width: 220px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .mobile-menu {
+                width: min(330px, 88vw);
+                padding: 22px 20px;
+            }
+
+            .hero {
+                min-height: 500px;
+            }
+
+            .hero-slide {
+                background-position: center center;
+            }
+
+            .hero-content {
+                width: 100%;
+                padding: 28px 18px 55px;
+            }
+
+            .hero-content h1 {
+                font-size: clamp(34px, 10vw, 42px);
+                line-height: 1.08;
+                margin-bottom: 14px;
+            }
+
+            .hero-content p {
+                max-width: 340px;
+                font-size: 14px;
+                line-height: 1.55;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-small {
+                margin-bottom: 14px;
+                padding: 6px 11px;
+                font-size: 9px;
+            }
+
+            .search-box {
+                width: 100%;
+                max-width: 390px;
+                display: grid;
+                grid-template-columns: 1fr auto;
+            }
+
+            .search-box input {
+                width: 100%;
+                min-width: 0;
+                padding: 14px 13px;
+            }
+
+            .search-box button {
+                min-width: 78px;
+                padding: 0 14px;
+            }
+
+            .slider-arrow {
+                top: auto;
+                bottom: 17px;
+                transform: none;
+                width: 36px;
+                height: 36px;
+                font-size: 17px;
+            }
+
+            .slider-arrow:hover {
+                transform: scale(1.05);
+            }
+
+            .slider-prev {
+                left: 16px;
+            }
+
+            .slider-next {
+                right: 16px;
+            }
+
+            .slider-dots {
+                bottom: 29px;
+            }
+
+            .collection-section {
+                width: calc(100% - 28px);
+                padding: 48px 0 55px;
+            }
+
+            .section-title {
+                margin-bottom: 24px;
+            }
+
+            .section-title h2 {
+                font-size: 28px;
+                line-height: 1.15;
+            }
+
+            .section-title p {
+                font-size: 13px;
+            }
+
+            .filters {
+                width: 100%;
+                margin-bottom: 28px;
+                padding: 14px;
+                gap: 10px;
+                border-radius: 12px;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-group label {
+                font-size: 11px;
+            }
+
+            .filter-group select {
+                width: 100%;
+                min-width: 0;
+                min-height: 44px;
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .reset-btn {
+                min-height: 44px;
+                margin-top: 2px;
+            }
+
+            .dress-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .dress-card {
+                border-radius: 13px;
+            }
+
+            .dress-card:hover {
+                transform: none;
+                box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            }
+
+            .dress-image {
+                height: auto;
+                aspect-ratio: 4 / 5;
+                object-fit: cover;
+            }
+
+            .favorite-form {
+                top: 10px;
+                right: 10px;
+            }
+
+            .favorite-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .collection-badge {
+                top: 10px;
+                left: 10px;
+                padding: 5px 9px;
+                font-size: 9px;
+            }
+
+            .dress-info {
+                padding: 16px;
+            }
+
+            .dress-info h3 {
+                font-size: 18px;
+                margin-bottom: 6px;
+            }
+
+            .category {
+                font-size: 12px;
+                margin-bottom: 11px;
+            }
+
+            .detail {
+                padding: 6px 8px;
+                font-size: 10px;
+            }
+
+            .empty-state {
+                padding: 55px 16px;
+            }
+
+            footer {
+                padding: 28px 16px;
+            }
+
+            footer p {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            .navbar {
+                height: 62px;
+            }
+
+            .logo {
+                font-size: 18px;
+                max-width: 190px;
+            }
+
+            .menu-btn {
+                font-size: 25px;
+            }
+
+            .hero {
+                min-height: 480px;
+            }
+
+            .hero-content {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .hero-content h1 {
+                font-size: 34px;
+            }
+
+            .hero-content p {
+                font-size: 13px;
+                max-width: 300px;
+            }
+
+            .search-box input {
+                padding: 13px 11px;
+                font-size: 13px;
+            }
+
+            .search-box button {
+                min-width: 72px;
+                padding: 0 11px;
+                font-size: 13px;
+            }
+
+            .slider-prev {
+                left: 12px;
+            }
+
+            .slider-next {
+                right: 12px;
+            }
+
+            .collection-section {
+                width: calc(100% - 22px);
+                padding-top: 42px;
+            }
+
+            .section-title h2 {
+                font-size: 26px;
+            }
+
+            .filters {
+                padding: 12px;
+            }
+
+            .dress-image {
+                aspect-ratio: 4 / 5;
+            }
+
+            .dress-info {
+                padding: 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ===================================================== -->
+
+    <nav class="navbar">
+
+        <a
+            href="{% url 'home' %}"
+            class="logo"
+        >
+            Dress Collection
+        </a>
+
+
+        <div class="nav-links">
+
+            <a href="{% url 'home' %}">
+                Home
+            </a>
+
+
+            <a href="#collection">
+                Collection
+            </a>
+
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="admin-btn"
+            >
+                Dashboard
+            </a>
+
+        </div>
+
+
+        <button
+            class="menu-btn"
+            onclick="openMenu()"
+            aria-label="Open menu"
+        >
+            ☰
+        </button>
+
+    </nav>
+
+
+
+    <!-- =====================================================
+         MOBILE MENU
+    ===================================================== -->
+
+    <div
+        class="menu-overlay"
+        id="menuOverlay"
+        onclick="closeMenu()"
+    ></div>
+
+
+    <div
+        class="mobile-menu"
+        id="mobileMenu"
+    >
+
+        <div class="mobile-menu-header">
+
+            <h2>
+                Menu
+            </h2>
+
+
+            <button
+                class="close-btn"
+                onclick="closeMenu()"
+                aria-label="Close menu"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <a
+            href="{% url 'home' %}"
+            onclick="closeMenu()"
+        >
+            🏠 Home
+        </a>
+
+
+        <a
+            href="#collection"
+            onclick="closeMenu()"
+        >
+            👗 Collection
+        </a>
+
+        <a
+            href="{% url 'favorite_list' %}"
+            onclick="closeMenu()"
+        >
+            ❤️ My Favorites
+        </a>
+
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="mobile-admin"
+            onclick="closeMenu()"
+        >
+            ⚙️ Dashboard
+        </a>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         HERO SLIDESHOW
+    ===================================================== -->
+
+    <section
+        class="hero {% if not dresses %}no-slides{% endif %}"
+        id="hero"
+    >
+
+
+        <!-- USER'S DRESS PHOTOS -->
+
+        <div
+            class="hero-slides"
+            id="heroSlides"
+        >
+
+            {% for dress in dresses %}
+
+                {% if dress.photo %}
+
+                    <div
+                        class="hero-slide {% if forloop.first %}active{% endif %}"
+                        style="
+                            background-image:
+                            url('{{ dress.photo.url }}');
+                        "
+                        data-index="{{ forloop.counter0 }}"
+                    ></div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+
+
+        <!-- HERO CONTENT -->
+
+        <div class="hero-content">
+
+            <div class="hero-small">
+                Your Collection
+            </div>
+
+
+            <h1>
+                Discover Your Style
+            </h1>
+
+
+            <p>
+                Explore and organize your personal dress collection.
+            </p>
+
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search dresses..."
+                    onkeyup="applyAllFilters()"
+                >
+
+
+                <button
+                    type="button"
+                    onclick="applyAllFilters()"
+                >
+                    Search
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SLIDER ARROWS -->
+
+        {% if dresses|length > 1 %}
+
+            <button
+                class="slider-arrow slider-prev"
+                onclick="previousSlide()"
+                aria-label="Previous image"
+            >
+                ‹
+            </button>
+
+
+            <button
+                class="slider-arrow slider-next"
+                onclick="nextSlide()"
+                aria-label="Next image"
+            >
+                ›
+            </button>
+
+
+            <div
+                class="slider-dots"
+                id="sliderDots"
+            >
+
+                {% for dress in dresses %}
+
+                    {% if dress.photo %}
+
+                        <button
+                            class="
+                                slider-dot
+                                {% if forloop.first %}active{% endif %}
+                            "
+                            data-slide-index="{{ forloop.counter0 }}"
+                            onclick="goToSlide(Number(this.dataset.slideIndex))"
+                            aria-label="Go to slide {{ forloop.counter }}"
+                        ></button>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+
+    <!-- =====================================================
+        COLLECTION
+    ===================================================== -->
+
+    <section
+        class="collection-section"
+        id="collection"
+    >
+
+
+        <div class="section-title">
+
+            <h2>
+                Our Collection
+            </h2>
+
+
+            <p>
+                Browse through your latest dresses
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             FILTERS
+        ================================================= -->
+
+        <div class="filters">
+
+
+            <!-- SORT -->
+
+            <div class="filter-group">
+
+                <label for="sortFilter">
+                    Sort By
+                </label>
+
+
+                <select
+                    id="sortFilter"
+                    onchange="applyAllFilters()"
+                >
+
+                    <option value="default">
+                        Default
+                    </option>
+
+
+                    <option value="name-asc">
+                        Name: A → Z
+                    </option>
+
+
+                    <option value="name-desc">
+                        Name: Z → A
+                    </option>
+
+
+                    <option value="newest">
+                        Newest First
+                    </option>
+
+
+                    <option value="oldest">
+                        Oldest First
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- CATEGORY -->
+
+            <div class="filter-group">
+
+                <label for="categoryFilter">
+                    Category
+                </label>
+
+
+                <select
+                    id="categoryFilter"
+                    onchange="applyAllFilters()"
+                >
+
+                    <option value="all">
+                        All Categories
+                    </option>
+
+
+                    {% for category in categories %}
+
+                        <option
+                            value="{{ category.name|lower }}"
+                        >
+                            {{ category.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+
+            <!-- COLOR -->
+
+            <div class="filter-group">
+
+                <label for="colorFilter">
+                    Color
+                </label>
+
+
+                <select
+                    id="colorFilter"
+                    onchange="applyAllFilters()"
+                >
+
+                    <option value="all">
+                        All Colors
+                    </option>
+
+
+                    {% for color in colors %}
+
+                        <option
+                            value="{{ color|lower }}"
+                        >
+                            {{ color }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+
+            <!-- SIZE -->
+
+            <div class="filter-group">
+
+                <label for="sizeFilter">
+                    Size
+                </label>
+
+
+                <select
+                    id="sizeFilter"
+                    onchange="applyAllFilters()"
+                >
+
+                    <option value="all">
+                        All Sizes
+                    </option>
+
+
+                    {% for size in sizes %}
+
+                        <option
+                            value="{{ size|lower }}"
+                        >
+                            {{ size }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+
+            <!-- RESET -->
+
+            <button
+                type="button"
+                class="reset-btn"
+                onclick="resetFilters()"
+            >
+                Reset
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             DRESS GRID
+        ================================================= -->
+
+        <div
+            class="dress-grid"
+            id="dressGrid"
+        >
+
+
+            {% for dress in dresses %}
+
+                <a
+                    href="{% url 'dress_detail' dress.id %}"
+                    class="dress-link"
+                >
+
+                    <div
+                        class="dress-card"
+                        data-id="{{ dress.id }}"
+                        data-category="{{ dress.category.name|lower }}"
+                        data-color="{{ dress.color|lower }}"
+                        data-size="{{ dress.size|lower }}"
+                        data-created="{{ dress.created_at|date:'U' }}"
+                    >
+
+
+                        <!-- IMAGE -->
+
+                        <div class="dress-image-wrapper">
+
+                            <form
+                                method="POST"
+                                action="{% url 'toggle_favorite' dress.id %}"
+                                class="favorite-form"
+                                onclick="event.stopPropagation();"
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="favorite-btn {% if dress.id in favorite_ids %}active{% endif %}"
+                                    title="{% if dress.id in favorite_ids %}Remove from favorites{% else %}Add to favorites{% endif %}"
+                                    onclick="event.stopPropagation();"
+                                >
+                                    {% if dress.id in favorite_ids %}
+                                        ❤️
+                                    {% else %}
+                                        🤍
+                                    {% endif %}
+                                </button>
+                            </form>
+
+                            {% if dress.photo %}
+
+                                <img
+                                    src="{{ dress.photo.url }}"
+                                    alt="{{ dress.name }}"
+                                    class="dress-image"
+                                    loading="lazy"
+                                >
+
+                            {% endif %}
+
+
+                            <span class="collection-badge">
+                                Collection
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- INFORMATION -->
+
+                        <div class="dress-info">
+
+                            <h3>
+                                {{ dress.name }}
+                            </h3>
+
+
+                            <div class="category">
+                                {{ dress.category.name }}
+                            </div>
+
+
+                            <div class="dress-details">
+
+                                <span class="detail">
+                                    Color: {{ dress.color }}
+                                </span>
+
+
+                                <span class="detail">
+                                    Size: {{ dress.size }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+
+            {% empty %}
+
+                <div class="empty-state">
+
+                    <div class="empty-state-icon">
+                        👗
+                    </div>
+
+
+                    <h3>
+                        Your collection is empty
+                    </h3>
+
+
+                    <p>
+                        Add your first dress from the dashboard.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+
+
+            <!-- FILTER NO RESULTS -->
+
+            <div
+                class="no-results"
+                id="noResults"
+            >
+
+                <h3>
+                    No dresses found
+                </h3>
+
+
+                <p>
+                    Try changing your search or filters.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Dress Collection.
+            All rights reserved.
+        </p>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
+
+    <script>
+
+
+        /* =====================================================
+           MOBILE MENU
+        ===================================================== */
+
+        function openMenu() {
+
+            document
+                .getElementById("mobileMenu")
+                .classList
+                .add("active");
+
+
+            document
+                .getElementById("menuOverlay")
+                .classList
+                .add("active");
+
+
+            document.body.style.overflow = "hidden";
+        }
+
+
+        function closeMenu() {
+
+            document
+                .getElementById("mobileMenu")
+                .classList
+                .remove("active");
+
+
+            document
+                .getElementById("menuOverlay")
+                .classList
+                .remove("active");
+
+
+            document.body.style.overflow = "";
+        }
+
+
+
+        /* =====================================================
+           HERO SLIDESHOW
+        ===================================================== */
+
+        const slides =
+            document.querySelectorAll(".hero-slide");
+
+        const dots =
+            document.querySelectorAll(".slider-dot");
+
+        let currentSlide = 0;
+
+        let slideTimer = null;
+
+
+        function showSlide(index) {
+
+            if (!slides.length) {
+                return;
+            }
+
+
+            if (index >= slides.length) {
+
+                index = 0;
+            }
+
+
+            if (index < 0) {
+
+                index = slides.length - 1;
+            }
+
+
+            slides.forEach(function(slide) {
+
+                slide.classList.remove("active");
+
+            });
+
+
+            dots.forEach(function(dot) {
+
+                dot.classList.remove("active");
+
+            });
+
+
+            slides[index].classList.add("active");
+
+
+            if (dots[index]) {
+
+                dots[index].classList.add("active");
+            }
+
+
+            currentSlide = index;
+        }
+
+
+
+        function nextSlide() {
+
+            showSlide(currentSlide + 1);
+
+            restartSlider();
+        }
+
+
+
+        function previousSlide() {
+
+            showSlide(currentSlide - 1);
+
+            restartSlider();
+        }
+
+
+
+        function goToSlide(index) {
+
+            showSlide(index);
+
+            restartSlider();
+        }
+
+
+
+        function startSlider() {
+
+            if (slides.length <= 1) {
+                return;
+            }
+
+
+            slideTimer = setInterval(function() {
+
+                showSlide(currentSlide + 1);
+
+            }, 4000);
+        }
+
+
+
+        function restartSlider() {
+
+            if (slideTimer) {
+
+                clearInterval(slideTimer);
+            }
+
+
+            startSlider();
+        }
+
+
+
+        startSlider();
+
+
+
+        /* =====================================================
+        SEARCH + FILTERS + SORTING
+        ===================================================== */
+
+        function applyAllFilters() {
+
+
+            const searchInput =
+                document
+                .getElementById("searchInput")
+                .value
+                .toLowerCase()
+                .trim();
+
+
+            const category =
+                document
+                .getElementById("categoryFilter")
+                .value;
+
+
+            const color =
+                document
+                .getElementById("colorFilter")
+                .value;
+
+
+            const size =
+                document
+                .getElementById("sizeFilter")
+                .value;
+
+
+            const sort =
+                document
+                .getElementById("sortFilter")
+                .value;
+
+
+            const grid =
+                document.getElementById("dressGrid");
+
+
+            const cards =
+                Array.from(
+                    document.querySelectorAll(".dress-link")
+                );
+
+
+            let visibleCards = [];
+
+
+
+            /* =================================================
+               FILTER
+            ================================================= */
+
+            cards.forEach(function(card) {
+
+
+                const dressCard =
+                    card.querySelector(".dress-card");
+
+
+                const dressName =
+                    card
+                    .querySelector("h3")
+                    .innerText
+                    .toLowerCase();
+
+
+                const dressCategory =
+                    dressCard.dataset.category;
+
+
+                const dressColor =
+                    dressCard.dataset.color;
+
+
+                const dressSize =
+                    dressCard.dataset.size;
+
+
+
+                const categoryMatch =
+                    category === "all" ||
+                    dressCategory === category;
+
+
+                const colorMatch =
+                    color === "all" ||
+                    dressColor === color;
+
+
+                const sizeMatch =
+                    size === "all" ||
+                    dressSize === size;
+
+
+                const searchMatch =
+                    searchInput === "" ||
+
+                    dressName.includes(
+                        searchInput
+                    ) ||
+
+                    dressCategory.includes(
+                        searchInput
+                    ) ||
+
+                    dressColor.includes(
+                        searchInput
+                    ) ||
+
+                    dressSize.includes(
+                        searchInput
+                    );
+
+
+
+                if (
+                    categoryMatch &&
+                    colorMatch &&
+                    sizeMatch &&
+                    searchMatch
+                ) {
+
+                    card.style.display = "";
+
+                    visibleCards.push(card);
+
+                } else {
+
+                    card.style.display = "none";
+                }
+
+            });
+
+
+
+            /* =================================================
+               SORT
+            ================================================= */
+
+            visibleCards.sort(function(a, b) {
+
+
+                const cardA =
+                    a.querySelector(".dress-card");
+
+
+                const cardB =
+                    b.querySelector(".dress-card");
+
+
+
+                if (
+                    sort === "name-asc" ||
+                    sort === "name-desc"
+                ) {
+
+                    const nameA =
+                        a.querySelector("h3")
+                        .innerText
+                        .trim()
+                        .toLowerCase();
+
+
+                    const nameB =
+                        b.querySelector("h3")
+                        .innerText
+                        .trim()
+                        .toLowerCase();
+
+
+                    if (sort === "name-asc") {
+
+                        return nameA.localeCompare(
+                            nameB
+                        );
+                    }
+
+
+                    return nameB.localeCompare(
+                        nameA
+                    );
+                }
+
+
+
+                const dateA =
+                    parseInt(
+                        cardA.dataset.created ||
+                        cardA.dataset.id
+                    );
+
+
+                const dateB =
+                    parseInt(
+                        cardB.dataset.created ||
+                        cardB.dataset.id
+                    );
+
+
+
+                if (sort === "newest") {
+
+                    return dateB - dateA;
+                }
+
+
+                if (sort === "oldest") {
+
+                    return dateA - dateB;
+                }
+
+
+                /* DEFAULT */
+
+                const idA =
+                    parseInt(cardA.dataset.id);
+
+
+                const idB =
+                    parseInt(cardB.dataset.id);
+
+
+                return idA - idB;
+
+            });
+
+
+
+            /* =================================================
+               REORDER
+            ================================================= */
+
+            visibleCards.forEach(function(card) {
+
+                grid.appendChild(card);
+
+            });
+
+
+
+            /* =================================================
+               NO RESULTS
+            ================================================= */
+
+            const noResults =
+                document.getElementById("noResults");
+
+
+            if (visibleCards.length === 0 && cards.length > 0) {
+
+                noResults.style.display = "block";
+
+            } else {
+
+                noResults.style.display = "none";
+            }
+
+        }
+
+
+
+        /* =====================================================
+           RESET FILTERS
+        ===================================================== */
+
+        function resetFilters() {
+
+
+            document
+                .getElementById("searchInput")
+                .value = "";
+
+
+            document
+                .getElementById("categoryFilter")
+                .value = "all";
+
+
+            document
+                .getElementById("colorFilter")
+                .value = "all";
+
+
+            document
+                .getElementById("sizeFilter")
+                .value = "all";
+
+
+            document
+                .getElementById("sortFilter")
+                .value = "default";
+
+
+            applyAllFilters();
+
+        }
+
+
+
+        /* =====================================================
+           KEYBOARD SUPPORT
+        ===================================================== */
+
+        document.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Escape") {
+
+                    closeMenu();
+                }
+
+
+                if (
+                    event.key === "ArrowRight" &&
+                    slides.length > 1
+                ) {
+
+                    nextSlide();
+                }
+
+
+                if (
+                    event.key === "ArrowLeft" &&
+                    slides.length > 1
+                ) {
+
+                    previousSlide();
+                }
+
+            }
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>

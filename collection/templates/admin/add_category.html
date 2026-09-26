@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Category | Dress Collection</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #f6f7f9;
+            --card: rgba(255, 255, 255, 0.92);
+            --text: #151515;
+            --muted: #777;
+            --border: #e7e7e7;
+            --dark: #111;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 10% 0%,
+                    rgba(17, 17, 17, 0.045),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 90% 10%,
+                    rgba(17, 17, 17, 0.035),
+                    transparent 28%
+                ),
+                var(--bg);
+
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            min-height: 72px;
+            background: rgba(17, 17, 17, 0.94);
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 10px 5%;
+            gap: 18px;
+
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.10);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 21px;
+            font-weight: 750;
+            letter-spacing: -0.4px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+
+            background: white;
+            color: #111;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 21px;
+
+            box-shadow: 0 5px 16px rgba(0, 0, 0, 0.16);
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .username {
+            color: #d5d5d5;
+            font-size: 13px;
+        }
+
+        .dashboard-btn {
+            background: white;
+            color: #111;
+
+            padding: 10px 16px;
+            border-radius: 999px;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition: 0.25s ease;
+        }
+
+        .dashboard-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 18px rgba(255, 255, 255, 0.14);
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .page {
+            width: min(850px, calc(100% - 30px));
+            margin: 0 auto;
+            padding: 50px 0 70px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            margin-bottom: 20px;
+
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #111;
+            transform: translateX(-3px);
+        }
+
+        .page-heading {
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            background: #111;
+            color: white;
+
+            padding: 7px 12px;
+            border-radius: 999px;
+
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+
+            margin-bottom: 14px;
+
+            box-shadow: 0 7px 18px rgba(0, 0, 0, 0.10);
+        }
+
+        .page-title {
+            font-size: clamp(30px, 5vw, 42px);
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            border-radius: 22px;
+
+            padding: 34px;
+
+            box-shadow:
+                0 18px 50px rgba(0, 0, 0, 0.07);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+
+            padding-bottom: 22px;
+            margin-bottom: 26px;
+
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .card-icon {
+            width: 46px;
+            height: 46px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #f1f1f1;
+            border-radius: 13px;
+
+            font-size: 22px;
+        }
+
+        .card-title {
+            font-size: 19px;
+            font-weight: 750;
+            letter-spacing: -0.3px;
+        }
+
+        .card-subtitle {
+            margin-top: 3px;
+            color: #888;
+            font-size: 12px;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-group {
+            margin-bottom: 23px;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            margin-bottom: 9px;
+            color: #333;
+        }
+
+        .optional {
+            color: #999;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+
+            border: 1px solid #dcdcdc;
+            border-radius: 12px;
+
+            padding: 13px 14px;
+
+            font-family: inherit;
+            font-size: 15px;
+
+            outline: none;
+            background: white;
+            color: #222;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .form-group input {
+            height: 50px;
+        }
+
+        .form-group textarea {
+            min-height: 145px;
+            resize: vertical;
+            line-height: 1.55;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #aaa;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #111;
+
+            box-shadow:
+                0 0 0 4px rgba(0, 0, 0, 0.055);
+
+            transform: translateY(-1px);
+        }
+
+        .help-text {
+            color: #999;
+            font-size: 11px;
+            margin-top: 7px;
+        }
+
+        /* =========================
+           ACTIONS
+        ========================= */
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+
+            margin-top: 30px;
+            padding-top: 25px;
+
+            border-top: 1px solid #eeeeee;
+        }
+
+        .btn {
+            min-width: 140px;
+            min-height: 48px;
+
+            border-radius: 10px;
+            padding: 0 19px;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+            font-family: inherit;
+
+            text-align: center;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .cancel-btn {
+            background: white;
+            border: 1px solid #dcdcdc;
+            color: #555;
+        }
+
+        .cancel-btn:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+        }
+
+        .save-btn {
+            background: #111;
+            border: 1px solid #111;
+            color: white;
+
+            box-shadow:
+                0 7px 18px rgba(0, 0, 0, 0.14);
+        }
+
+        .save-btn:hover {
+            background: #292929;
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 10px 24px rgba(0, 0, 0, 0.18);
+        }
+
+        .save-btn:disabled {
+            opacity: 0.65;
+            cursor: wait;
+            transform: none;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+            .topbar {
+                min-height: 64px;
+                padding: 9px 14px;
+            }
+
+            .brand {
+                font-size: 17px;
+                gap: 9px;
+            }
+
+            .brand-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                font-size: 18px;
+            }
+
+            .username {
+                display: none;
+            }
+
+            .dashboard-btn {
+                min-height: 40px;
+                padding: 8px 12px;
+                font-size: 11px;
+
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .page {
+                width: calc(100% - 22px);
+                padding: 28px 0 45px;
+            }
+
+            .back-link {
+                font-size: 13px;
+                margin-bottom: 17px;
+            }
+
+            .page-heading {
+                margin-bottom: 21px;
+            }
+
+            .eyebrow {
+                font-size: 9px;
+                margin-bottom: 11px;
+            }
+
+            .page-title {
+                font-size: 28px;
+                letter-spacing: -0.8px;
+            }
+
+            .page-description {
+                font-size: 13px;
+            }
+
+            .card {
+                padding: 20px 16px;
+                border-radius: 16px;
+            }
+
+            .card-header {
+                gap: 11px;
+                padding-bottom: 18px;
+                margin-bottom: 21px;
+            }
+
+            .card-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 11px;
+                font-size: 19px;
+            }
+
+            .card-title {
+                font-size: 17px;
+            }
+
+            .card-subtitle {
+                font-size: 11px;
+            }
+
+            .form-group {
+                margin-bottom: 19px;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                font-size: 16px;
+                border-radius: 11px;
+            }
+
+            .form-group input {
+                height: 48px;
+            }
+
+            .form-group textarea {
+                min-height: 130px;
+            }
+
+            .actions {
+                flex-direction: column-reverse;
+                margin-top: 24px;
+                padding-top: 20px;
+            }
+
+            .btn {
+                width: 100%;
+                min-height: 49px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .topbar {
+                padding: 8px 10px;
+            }
+
+            .brand {
+                font-size: 15px;
+            }
+
+            .brand-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .dashboard-btn {
+                padding: 7px 10px;
+                font-size: 10px;
+            }
+
+            .page {
+                width: calc(100% - 16px);
+                padding-top: 23px;
+            }
+
+            .page-title {
+                font-size: 25px;
+            }
+
+            .card {
+                padding: 17px 13px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                👗
+            </div>
+
+            Dress Collection
+
+        </div>
+
+        <div class="top-right">
+
+            <span class="username">
+                {{ request.user.username }}
+            </span>
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="dashboard-btn"
+            >
+                📊 Dashboard
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- PAGE -->
+
+    <main class="page">
+
+        <a
+            href="{% url 'category_list' %}"
+            class="back-link"
+        >
+            ← Back to Categories
+        </a>
+
+
+        <div class="page-heading">
+
+            <div class="eyebrow">
+                Category Management
+            </div>
+
+            <h1 class="page-title">
+                Add Category
+            </h1>
+
+            <p class="page-description">
+                Create a new category for your personal dress collection.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="card-icon">
+                    🏷️
+                </div>
+
+                <div>
+                    <div class="card-title">
+                        Category Information
+                    </div>
+
+                    <div class="card-subtitle">
+                        Organize your dresses with a clear category.
+                    </div>
+                </div>
+
+            </div>
+
+
+            <form
+                method="post"
+                action="{% url 'add_category' %}"
+                id="categoryForm"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Category Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Example: Shirts"
+                        required
+                        autofocus
+                        autocomplete="off"
+                    >
+
+                    <div class="help-text">
+                        Give your category a clear name.
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                        <span class="optional">Optional</span>
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Describe this category..."
+                    ></textarea>
+
+                    <div class="help-text">
+                        Add a short description to make the category easier to recognize.
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="actions">
+
+                    <a
+                        href="{% url 'category_list' %}"
+                        class="btn cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn save-btn"
+                    >
+                        ✓ Create Category
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+
+    <script>
+        const categoryForm = document.getElementById("categoryForm");
+
+        if (categoryForm) {
+            categoryForm.addEventListener("submit", function () {
+
+                const button =
+                    this.querySelector(".save-btn");
+
+                if (button) {
+                    button.disabled = true;
+                    button.textContent = "Creating...";
+                }
+
+            });
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard | Dress Collection</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background: #f5f6f8;
+
+            color: #222;
+        }
+
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        /* =================================================
+           TOPBAR
+        ================================================= */
+
+        .topbar {
+
+            height: 74px;
+
+            background: #111;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 30px;
+
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            font-size: 22px;
+
+            font-weight: 700;
+
+        }
+
+
+        .brand-icon {
+
+            width: 42px;
+
+            height: 42px;
+
+            background: white;
+
+            border-radius: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 22px;
+
+        }
+
+
+        .top-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 20px;
+
+        }
+
+
+        .welcome {
+
+            font-size: 14px;
+
+        }
+
+
+        .website-btn {
+
+            background: white;
+
+            color: #111;
+
+            padding: 11px 18px;
+
+            border-radius: 9px;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+
+        }
+
+
+        .website-btn:hover {
+
+            background: #eeeeee;
+
+        }
+
+
+        /* =================================================
+           LAYOUT
+        ================================================= */
+
+        .layout {
+
+            display: flex;
+
+            min-height: calc(100vh - 74px);
+
+        }
+
+
+        /* =================================================
+           SIDEBAR
+        ================================================= */
+
+        .sidebar {
+
+            width: 250px;
+
+            background: white;
+
+            border-right: 1px solid #e5e5e5;
+
+            padding: 25px 15px;
+
+        }
+
+
+        .sidebar-title {
+
+            font-size: 12px;
+
+            color: #999;
+
+            font-weight: 700;
+
+            letter-spacing: 1px;
+
+            margin: 0 12px 14px;
+
+        }
+
+
+        .sidebar a {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            padding: 14px 16px;
+
+            margin-bottom: 7px;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            color: #555;
+
+            transition: 0.2s;
+
+        }
+
+
+        .sidebar a:hover {
+
+            background: #f2f2f2;
+
+            color: #111;
+
+        }
+
+
+        .sidebar a.active {
+
+            background: #111;
+
+            color: white;
+
+        }
+
+
+        .sidebar-divider {
+
+            margin: 28px 0 18px;
+
+        }
+
+
+        /* =================================================
+           LOGOUT
+        ================================================= */
+
+        .logout-form {
+
+            margin: 0;
+
+        }
+
+
+        .logout-btn {
+
+            width: 100%;
+
+            border: none;
+
+            background: transparent;
+
+            text-align: left;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            padding: 14px 16px;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            color: #555;
+
+            font-family: inherit;
+
+        }
+
+
+        .logout-btn:hover {
+
+            background: #f2f2f2;
+
+            color: #111;
+
+        }
+
+
+        /* =================================================
+           MAIN
+        ================================================= */
+
+        .main {
+
+            flex: 1;
+
+            padding: 38px;
+
+            overflow-x: hidden;
+
+        }
+
+
+        .page-title {
+
+            font-size: 32px;
+
+            font-weight: 750;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .page-subtitle {
+
+            color: #777;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        /* =================================================
+           STATS
+        ================================================= */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 36px;
+
+        }
+
+
+        .stat-card {
+
+            background: white;
+
+            border: 1px solid #e8e8e8;
+
+            border-radius: 16px;
+
+            padding: 26px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+        }
+
+
+        .stat-title {
+
+            color: #888;
+
+            font-size: 14px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .stat-number {
+
+            font-size: 32px;
+
+            font-weight: 750;
+
+        }
+
+
+        .stat-icon {
+
+            width: 54px;
+
+            height: 54px;
+
+            background: #f4f4f4;
+
+            border-radius: 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 25px;
+
+        }
+
+
+        /* =================================================
+           CONTENT GRID
+        ================================================= */
+
+        .content-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                2fr 1fr;
+
+            gap: 26px;
+
+        }
+
+
+        .card {
+
+            background: white;
+
+            border: 1px solid #e8e8e8;
+
+            border-radius: 16px;
+
+            overflow: hidden;
+
+        }
+
+
+        .card-header {
+
+            padding: 22px;
+
+            border-bottom: 1px solid #eee;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+        }
+
+
+        .card-header h2 {
+
+            font-size: 19px;
+
+        }
+
+
+        .view-all {
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #555;
+
+        }
+
+
+        .view-all:hover {
+
+            color: #111;
+
+        }
+
+
+        /* =================================================
+           RECENT DRESSES
+        ================================================= */
+
+        .dress-row {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            padding: 16px 22px;
+
+            border-bottom: 1px solid #f0f0f0;
+
+        }
+
+
+        .dress-row:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+        .dress-image {
+
+            width: 58px;
+
+            height: 68px;
+
+            object-fit: cover;
+
+            border-radius: 10px;
+
+            background: #eee;
+
+        }
+
+
+        .dress-info {
+
+            flex: 1;
+
+        }
+
+
+        .dress-name {
+
+            font-weight: 700;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .dress-meta {
+
+            color: #888;
+
+            font-size: 13px;
+
+        }
+
+
+        .size {
+
+            background: #f3f3f3;
+
+            padding: 5px 10px;
+
+            border-radius: 8px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+        }
+
+
+        .empty {
+
+            padding: 45px 35px;
+
+            text-align: center;
+
+            color: #888;
+
+        }
+
+
+        .empty-icon {
+
+            font-size: 38px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        /* =================================================
+           QUICK ACTIONS
+        ================================================= */
+
+        .quick-actions {
+
+            padding: 18px;
+
+        }
+
+
+        .quick-action {
+
+            display: block;
+
+            padding: 18px;
+
+            border: 1px solid #e8e8e8;
+
+            border-radius: 12px;
+
+            margin-bottom: 12px;
+
+            transition: 0.2s;
+
+        }
+
+
+        .quick-action:last-child {
+
+            margin-bottom: 0;
+
+        }
+
+
+        .quick-action:hover {
+
+            border-color: #111;
+
+            transform: translateY(-2px);
+
+        }
+
+
+        .quick-action-title {
+
+            font-weight: 700;
+
+            margin-bottom: 7px;
+
+        }
+
+
+        .quick-action-text {
+
+            font-size: 13px;
+
+            color: #888;
+
+        }
+
+
+        /* =================================================
+           USER INFO
+        ================================================= */
+
+        .user-info {
+
+            margin-top: 18px;
+
+            padding: 16px;
+
+            background: #f7f7f7;
+
+            border-radius: 12px;
+
+        }
+
+
+        .user-info-label {
+
+            font-size: 11px;
+
+            color: #999;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.8px;
+
+            margin-bottom: 5px;
+
+            font-weight: 700;
+
+        }
+
+
+        .user-info-name {
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+        }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+
+                width: 210px;
+
+            }
+
+
+            .main {
+
+                padding: 25px;
+
+            }
+
+
+            .content-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .topbar {
+
+                height: auto;
+
+                min-height: 70px;
+
+                padding: 14px 16px;
+
+            }
+
+
+            .brand {
+
+                font-size: 18px;
+
+            }
+
+
+            .brand-icon {
+
+                width: 36px;
+
+                height: 36px;
+
+                font-size: 19px;
+
+            }
+
+
+            .welcome {
+
+                display: none;
+
+            }
+
+
+            .website-btn {
+
+                padding: 9px 12px;
+
+                font-size: 12px;
+
+            }
+
+
+            .layout {
+
+                display: block;
+
+            }
+
+
+            .sidebar {
+
+                width: 100%;
+
+                border-right: none;
+
+                border-bottom: 1px solid #e5e5e5;
+
+                padding: 12px;
+
+                display: flex;
+
+                overflow-x: auto;
+
+                gap: 7px;
+
+            }
+
+
+            .sidebar-title,
+
+            .sidebar-divider {
+
+                display: none;
+
+            }
+
+
+            .sidebar a,
+
+            .logout-btn {
+
+                white-space: nowrap;
+
+                margin: 0;
+
+                padding: 11px 14px;
+
+                width: auto;
+
+            }
+
+
+            .logout-form {
+
+                width: auto;
+
+            }
+
+
+            .main {
+
+                padding: 20px 15px;
+
+            }
+
+
+            .page-title {
+
+                font-size: 27px;
+
+            }
+
+
+            .stats {
+
+                grid-template-columns: 1fr;
+
+                gap: 12px;
+
+            }
+
+
+            .stat-card {
+
+                padding: 20px;
+
+            }
+
+
+            .content-grid {
+
+                gap: 16px;
+
+            }
+
+        }
+
+
+        /* =================================================
+           FINAL MOBILE POLISH
+           Keeps the existing dashboard design unchanged.
+        ================================================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                overflow-x: hidden;
+            }
+
+            .topbar {
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                min-height: 64px;
+                padding: 10px 14px;
+                gap: 10px;
+            }
+
+            .brand {
+                min-width: 0;
+                gap: 9px;
+                font-size: 16px;
+            }
+
+            .brand-icon {
+                flex: 0 0 34px;
+                width: 34px;
+                height: 34px;
+                border-radius: 9px;
+                font-size: 17px;
+            }
+
+            .top-right {
+                gap: 8px;
+            }
+
+            .website-btn {
+                padding: 9px 11px;
+                border-radius: 8px;
+                font-size: 11px;
+                white-space: nowrap;
+            }
+
+            .layout {
+                width: 100%;
+            }
+
+            .sidebar {
+                position: sticky;
+                top: 64px;
+                z-index: 900;
+                width: 100%;
+                padding: 9px 10px;
+                gap: 6px;
+                background: rgba(255,255,255,0.97);
+                box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .sidebar::-webkit-scrollbar {
+                display: none;
+            }
+
+            .sidebar a,
+            .logout-btn {
+                flex: 0 0 auto;
+                min-height: 40px;
+                padding: 9px 12px;
+                border-radius: 9px;
+                gap: 7px;
+                font-size: 13px;
+            }
+
+            .logout-form {
+                flex: 0 0 auto;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .main {
+                width: 100%;
+                padding: 22px 13px 35px;
+            }
+
+            .page-title {
+                font-size: 25px;
+                line-height: 1.2;
+                word-break: break-word;
+            }
+
+            .page-subtitle {
+                font-size: 13px;
+                line-height: 1.5;
+                margin-bottom: 22px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 8px;
+                margin-bottom: 22px;
+            }
+
+            .stat-card {
+                min-width: 0;
+                padding: 14px 10px;
+                border-radius: 12px;
+                display: block;
+                text-align: center;
+            }
+
+            .stat-title {
+                font-size: 10px;
+                line-height: 1.25;
+                margin-bottom: 5px;
+            }
+
+            .stat-number {
+                font-size: 22px;
+                line-height: 1.1;
+            }
+
+            .stat-icon {
+                width: 34px;
+                height: 34px;
+                margin: 8px auto 0;
+                border-radius: 9px;
+                font-size: 17px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .card {
+                border-radius: 13px;
+            }
+
+            .card-header {
+                padding: 16px;
+                gap: 10px;
+            }
+
+            .card-header h2 {
+                font-size: 17px;
+            }
+
+            .view-all {
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .dress-row {
+                gap: 11px;
+                padding: 13px 15px;
+            }
+
+            .dress-image {
+                flex: 0 0 48px;
+                width: 48px;
+                height: 60px;
+                border-radius: 8px;
+            }
+
+            .dress-info {
+                min-width: 0;
+            }
+
+            .dress-name {
+                font-size: 13px;
+                line-height: 1.3;
+                margin-bottom: 3px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .dress-meta {
+                font-size: 11px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .size {
+                flex: 0 0 auto;
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .empty {
+                padding: 35px 20px;
+            }
+
+            .quick-actions {
+                padding: 12px;
+            }
+
+            .quick-action {
+                padding: 14px;
+                margin-bottom: 9px;
+                border-radius: 10px;
+            }
+
+            .quick-action-title {
+                font-size: 13px;
+                margin-bottom: 5px;
+            }
+
+            .quick-action-text {
+                font-size: 11px;
+                line-height: 1.45;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            .topbar {
+                padding: 9px 11px;
+            }
+
+            .brand {
+                font-size: 14px;
+            }
+
+            .brand-icon {
+                flex-basis: 31px;
+                width: 31px;
+                height: 31px;
+                font-size: 16px;
+            }
+
+            .website-btn {
+                padding: 8px 9px;
+                font-size: 10px;
+            }
+
+            .sidebar {
+                top: 58px;
+                padding: 8px;
+            }
+
+            .sidebar a,
+            .logout-btn {
+                min-height: 38px;
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .main {
+                padding: 19px 10px 30px;
+            }
+
+            .page-title {
+                font-size: 23px;
+            }
+
+            .page-subtitle {
+                font-size: 12px;
+            }
+
+            .stats {
+                gap: 6px;
+            }
+
+            .stat-card {
+                padding: 12px 7px;
+            }
+
+            .stat-title {
+                font-size: 9px;
+            }
+
+            .stat-number {
+                font-size: 20px;
+            }
+
+            .stat-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 15px;
+            }
+
+            .card-header {
+                padding: 14px;
+            }
+
+            .card-header h2 {
+                font-size: 16px;
+            }
+
+            .dress-row {
+                padding: 12px;
+            }
+        }
+
+
+        /* =================================================
+           MOBILE NAVIGATION FIX
+           Keeps all sidebar actions visible on phone.
+        ================================================= */
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                position: sticky;
+                top: 64px;
+
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+
+                width: 100%;
+                padding: 10px;
+
+                gap: 7px;
+
+                overflow: visible;
+
+                background: rgba(255, 255, 255, 0.98);
+
+                border-bottom: 1px solid #e5e5e5;
+
+                box-shadow:
+                    0 3px 12px rgba(0, 0, 0, 0.05);
+            }
+
+            .sidebar a,
+            .logout-form {
+                width: 100%;
+                min-width: 0;
+                margin: 0;
+            }
+
+            .sidebar a,
+            .logout-btn {
+                width: 100%;
+                min-height: 42px;
+
+                padding: 9px 7px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                gap: 5px;
+
+                border-radius: 9px;
+
+                font-size: 12px;
+
+                white-space: nowrap;
+                text-align: center;
+            }
+
+            .logout-btn {
+                border: none;
+                background: transparent;
+            }
+
+            .sidebar a.active {
+                background: #111;
+                color: white;
+            }
+
+            .sidebar-divider,
+            .sidebar-title,
+            .user-info {
+                display: none;
+            }
+
+            .quick-action {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .quick-action-title,
+            .quick-action-text {
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            .sidebar {
+                top: 58px;
+
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+
+                padding: 8px;
+
+                gap: 6px;
+            }
+
+            .sidebar a,
+            .logout-btn {
+                min-height: 40px;
+
+                padding: 8px 4px;
+
+                font-size: 11px;
+                gap: 4px;
+            }
+
+            .quick-action {
+                padding: 14px;
+            }
+
+            .quick-action-title {
+                font-size: 13px;
+            }
+
+            .quick-action-text {
+                font-size: 11px;
+                line-height: 1.45;
+            }
+        }
+
+        @media (max-width: 350px) {
+
+            .sidebar {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .sidebar a,
+            .logout-btn {
+                font-size: 12px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     TOPBAR
+===================================================== -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            👗
+        </div>
+
+        Dress Collection
+
+    </div>
+
+
+    <div class="top-right">
+
+        <span class="welcome">
+
+            Welcome,
+            {{ request.user.username }}
+
+        </span>
+
+
+        <a
+            href="{% url 'home' %}"
+            class="website-btn"
+        >
+
+            View My Collection
+
+        </a>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     LAYOUT
+===================================================== -->
+
+<div class="layout">
+
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="sidebar-title">
+            MANAGEMENT
+        </div>
+
+
+        <!-- DASHBOARD -->
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="active"
+        >
+
+            📊
+
+            Dashboard
+
+        </a>
+
+
+        <!-- DRESSES -->
+
+        <a
+            href="{% url 'dashboard_dresses' %}"
+        >
+
+            👗
+
+            Dresses
+
+        </a>
+
+
+        <!-- CATEGORIES -->
+
+        <a
+            href="{% url 'category_list' %}"
+        >
+
+            🏷️
+
+            Categories
+
+        </a>
+
+
+        <!-- FAVORITES -->
+
+        <a
+            href="{% url 'favorite_list' %}"
+        >
+
+            ❤️
+
+            My Favorites
+
+        </a>
+
+
+        <div class="sidebar-divider"></div>
+
+
+        <!-- =================================================
+             SYSTEM
+        ================================================== -->
+
+        <div class="sidebar-title">
+            ACCOUNT
+        </div>
+
+
+        <!-- SHOW DJANGO ADMIN ONLY TO STAFF -->
+
+        {% if request.user.is_staff %}
+
+            <a
+                href="/admin/"
+            >
+
+                ⚙️
+
+                Django Admin
+
+            </a>
+
+        {% endif %}
+
+
+        <!-- LOGOUT -->
+
+        <form
+            method="post"
+            action="{% url 'logout' %}"
+            class="logout-form"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="logout-btn"
+            >
+
+                🚪
+
+                Logout
+
+            </button>
+
+        </form>
+
+
+        <!-- USER INFO -->
+
+        <div class="user-info">
+
+            <div class="user-info-label">
+                Logged in as
+            </div>
+
+            <div class="user-info-name">
+                {{ request.user.username }}
+            </div>
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =================================================
+         MAIN CONTENT
+    ================================================== -->
+
+    <main class="main">
+
+
+        <h1 class="page-title">
+
+            Welcome,
+            {{ request.user.username }}
+
+        </h1>
+
+
+        <p class="page-subtitle">
+
+            Manage your personal dress collection from one place.
+
+        </p>
+
+
+        <!-- =================================================
+             STATS
+        ================================================== -->
+
+        <section class="stats">
+
+
+            <!-- TOTAL DRESSES -->
+
+            <div class="stat-card">
+
+                <div>
+
+                    <div class="stat-title">
+                        Total Dresses
+                    </div>
+
+                    <div class="stat-number">
+                        {{ total_dresses }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    👗
+                </div>
+
+            </div>
+
+
+            <!-- CATEGORIES -->
+
+            <div class="stat-card">
+
+                <div>
+
+                    <div class="stat-title">
+                        Categories
+                    </div>
+
+                    <div class="stat-number">
+                        {{ total_categories }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    🏷️
+                </div>
+
+            </div>
+
+
+            <!-- RECENT DRESSES -->
+
+            <div class="stat-card">
+
+                <div>
+
+                    <div class="stat-title">
+                        Recent Dresses
+                    </div>
+
+                    <div class="stat-number">
+                        {{ recent_dresses|length }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    ✨
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
+
+        <section class="content-grid">
+
+
+            <!-- =================================================
+                 RECENT DRESSES
+            ================================================== -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <h2>
+                        Recent Dresses
+                    </h2>
+
+
+                    <a
+                        href="{% url 'dashboard_dresses' %}"
+                        class="view-all"
+                    >
+
+                        View All →
+
+                    </a>
+
+                </div>
+
+
+                {% for dress in recent_dresses %}
+
+
+                    <div class="dress-row">
+
+
+                        {% if dress.photo %}
+
+                            <img
+                                src="{{ dress.photo.url }}"
+                                class="dress-image"
+                                alt="{{ dress.name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="dress-image"></div>
+
+                        {% endif %}
+
+
+                        <div class="dress-info">
+
+                            <div class="dress-name">
+
+                                {{ dress.name }}
+
+                            </div>
+
+
+                            <div class="dress-meta">
+
+                                {{ dress.category.name }}
+
+                                ·
+
+                                {{ dress.color }}
+
+                            </div>
+
+                        </div>
+
+
+                        <span class="size">
+
+                            {{ dress.size }}
+
+                        </span>
+
+
+                    </div>
+
+
+                {% empty %}
+
+
+                    <div class="empty">
+
+                        <div class="empty-icon">
+                            👗
+                        </div>
+
+                        <div>
+                            No dresses added yet.
+                        </div>
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+            <!-- =================================================
+                 QUICK ACTIONS
+            ================================================== -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <h2>
+                        Quick Actions
+                    </h2>
+
+                </div>
+
+
+                <div class="quick-actions">
+
+
+                    <!-- ADD DRESS -->
+
+                    <a
+                        href="{% url 'add_dress' %}"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+
+                            ➕ Add Dress
+
+                        </div>
+
+
+                        <div class="quick-action-text">
+
+                            Add a new dress to your collection.
+
+                        </div>
+
+                    </a>
+
+
+                    <!-- ADD CATEGORY -->
+
+                    <a
+                        href="{% url 'add_category' %}"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+
+                            🏷️ Add Category
+
+                        </div>
+
+
+                        <div class="quick-action-text">
+
+                            Create a new dress category.
+
+                        </div>
+
+                    </a>
+
+
+                    <!-- VIEW MY COLLECTION -->
+
+                    <a
+                        href="{% url 'home' %}"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+
+                            🌐 View My Collection
+
+                        </div>
+
+
+                        <div class="quick-action-text">
+
+                            View your personal dress collection.
+
+                        </div>
+
+                    </a>
+
+
+                    <!-- MY FAVORITES -->
+
+                    <a
+                        href="{% url 'favorite_list' %}"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+
+                            ❤️ My Favorites
+
+                        </div>
+
+
+                        <div class="quick-action-text">
+
+                            View all your favorite dresses.
+
+                        </div>
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

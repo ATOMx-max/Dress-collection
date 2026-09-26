@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Manage Dresses | Dress Collection</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: #f5f6f8;
+            color: #1f2937;
+        }
+
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            height: 70px;
+            background: #111827;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 30px;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .top-links a {
+            color: white;
+            text-decoration: none;
+
+            padding: 9px 14px;
+
+            border-radius: 8px;
+
+            background: rgba(255, 255, 255, 0.1);
+
+            font-size: 14px;
+        }
+
+        .top-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .container {
+            max-width: 1250px;
+            margin: 40px auto;
+
+            padding: 0 25px;
+        }
+
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .btn {
+            display: inline-block;
+
+            padding: 11px 17px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #111827;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1f2937;
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-container {
+            background: white;
+
+            border-radius: 14px;
+
+            overflow-x: auto;
+
+            box-shadow:
+                0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+
+            min-width: 800px;
+        }
+
+        th {
+            text-align: left;
+
+            background: #f9fafb;
+
+            padding: 15px;
+
+            font-size: 13px;
+
+            color: #6b7280;
+
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+
+            border-top: 1px solid #eee;
+
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+
+        /* =========================
+           IMAGE
+        ========================= */
+
+        .dress-image {
+            width: 65px;
+            height: 80px;
+
+            object-fit: cover;
+
+            border-radius: 9px;
+
+            border: 1px solid #ddd;
+        }
+
+
+        .dress-name {
+            font-weight: 600;
+        }
+
+        .category {
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           ACTIONS
+        ========================= */
+
+        .actions {
+            display: flex;
+            gap: 7px;
+        }
+
+        .action-btn {
+            padding: 7px 11px;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .edit {
+            background: #eef2ff;
+            color: #3730a3;
+        }
+
+        .edit:hover {
+            background: #e0e7ff;
+        }
+
+        .delete {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .delete:hover {
+            background: #fee2e2;
+        }
+
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .empty {
+            text-align: center;
+
+            padding: 60px 20px;
+
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 17px;
+            }
+
+            .top-links {
+                gap: 5px;
+            }
+
+            .top-links a {
+                padding: 7px 9px;
+
+                font-size: 12px;
+            }
+
+            .container {
+                margin: 25px auto;
+
+                padding: 0 15px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+
+                gap: 15px;
+
+                flex-direction: column;
+            }
+
+            .page-header h1 {
+                font-size: 25px;
+            }
+
+        }
+
+
+        /* =========================
+           FINAL MOBILE POLISH
+           Keeps the existing page/table functionality.
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                overflow-x: hidden;
+            }
+
+            .topbar {
+                min-height: 64px;
+                height: auto;
+                padding: 10px 12px;
+                gap: 8px;
+            }
+
+            .logo {
+                min-width: 0;
+                font-size: 16px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .top-links {
+                flex: 0 0 auto;
+                gap: 5px;
+            }
+
+            .top-links a {
+                padding: 8px 9px;
+                font-size: 11px;
+                white-space: nowrap;
+            }
+
+            .container {
+                width: 100%;
+                margin: 22px auto 35px;
+                padding: 0 12px;
+            }
+
+            .page-header {
+                margin-bottom: 18px;
+                gap: 12px;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+                line-height: 1.2;
+            }
+
+            .page-header p {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+
+            .btn {
+                width: 100%;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+
+            .table-container {
+                width: 100%;
+                border-radius: 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                min-width: 760px;
+            }
+
+            th,
+            td {
+                padding: 12px;
+                font-size: 12px;
+            }
+
+            th {
+                font-size: 10px;
+            }
+
+            .dress-image {
+                width: 55px;
+                height: 68px;
+                border-radius: 8px;
+            }
+
+            .dress-name {
+                max-width: 180px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .actions {
+                gap: 6px;
+            }
+
+            .action-btn {
+                min-height: 38px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 8px 10px;
+                font-size: 11px;
+                white-space: nowrap;
+            }
+
+            .empty {
+                padding: 50px 18px;
+            }
+
+            .empty h2 {
+                font-size: 21px;
+            }
+
+            .empty p {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+        }
+
+        /* =========================
+           MOBILE CARD LAYOUT
+           Prevents the dress table from being cut off on phones.
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .table-container {
+                overflow: visible;
+                background: transparent;
+                box-shadow: none;
+            }
+
+            table {
+                min-width: 0 !important;
+                width: 100%;
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tbody {
+                display: grid;
+                gap: 12px;
+            }
+
+            tbody tr {
+                display: grid;
+                grid-template-columns: 76px minmax(0, 1fr);
+                grid-template-rows: auto auto auto auto auto;
+                column-gap: 12px;
+                row-gap: 5px;
+
+                padding: 12px;
+                background: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 14px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            }
+
+            tbody tr:hover td {
+                background: transparent;
+            }
+
+            tbody td {
+                min-width: 0;
+                padding: 2px 0;
+                border: 0;
+                font-size: 12px;
+                line-height: 1.35;
+            }
+
+            tbody td:nth-child(1) {
+                grid-column: 1;
+                grid-row: 1 / 5;
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+                padding-top: 2px;
+            }
+
+            tbody td:nth-child(2) {
+                grid-column: 2;
+                grid-row: 1;
+            }
+
+            tbody td:nth-child(3) {
+                grid-column: 2;
+                grid-row: 2;
+            }
+
+            tbody td:nth-child(4) {
+                grid-column: 2;
+                grid-row: 3;
+            }
+
+            tbody td:nth-child(5) {
+                grid-column: 2;
+                grid-row: 4;
+            }
+
+            tbody td:nth-child(6) {
+                grid-column: 1 / -1;
+                grid-row: 5;
+                padding-top: 8px;
+                margin-top: 4px;
+                border-top: 1px solid #eef0f3;
+            }
+
+            tbody td:nth-child(2)::before,
+            tbody td:nth-child(3)::before,
+            tbody td:nth-child(4)::before,
+            tbody td:nth-child(5)::before {
+                display: inline-block;
+                min-width: 58px;
+                margin-right: 5px;
+                color: #9ca3af;
+                font-size: 9px;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+
+            tbody td:nth-child(2)::before {
+                content: "Dress";
+            }
+
+            tbody td:nth-child(3)::before {
+                content: "Category";
+            }
+
+            tbody td:nth-child(4)::before {
+                content: "Color";
+            }
+
+            tbody td:nth-child(5)::before {
+                content: "Size";
+            }
+
+            .dress-image {
+                width: 66px;
+                height: 82px;
+                border-radius: 10px;
+            }
+
+            .dress-name {
+                max-width: none;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+                font-size: 14px;
+                font-weight: 750;
+                color: #111827;
+            }
+
+            .category {
+                color: #4b5563;
+            }
+
+            .actions {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .action-btn {
+                width: 100%;
+                min-height: 40px;
+                padding: 9px 10px;
+                border-radius: 9px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            .topbar {
+                padding: 9px 10px;
+            }
+
+            .logo {
+                font-size: 14px;
+            }
+
+            .top-links a {
+                padding: 7px 8px;
+                font-size: 10px;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+            .page-header p {
+                font-size: 11px;
+            }
+
+            table {
+                min-width: 720px;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+
+            .dress-image {
+                width: 50px;
+                height: 62px;
+            }
+
+            .action-btn {
+                min-height: 36px;
+                padding: 7px 9px;
+                font-size: 10px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         TOPBAR
+    ========================= -->
+
+    <div class="topbar">
+
+        <div class="logo">
+            👗 Dress Collection
+        </div>
+
+        <div class="top-links">
+
+            <a href="{% url 'admin_dashboard' %}">
+                📊 Dashboard
+            </a>
+
+            <a href="{% url 'home' %}">
+                🌐 Website
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         CONTENT
+    ========================= -->
+
+    <div class="container">
+
+
+        <!-- PAGE HEADER -->
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>
+                    Manage Dresses
+                </h1>
+
+                <p>
+                    View and manage all dresses in your collection.
+                </p>
+
+            </div>
+
+
+            <!-- ADD DRESS -->
+
+            <a
+                href="{% url 'add_dress' %}"
+                class="btn btn-primary"
+            >
+                ➕ Add Dress
+            </a>
+
+        </div>
+
+
+        <!-- =========================
+             TABLE
+        ========================= -->
+
+        <div class="table-container">
+
+            {% if dresses %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Photo
+                        </th>
+
+                        <th>
+                            Dress
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Color
+                        </th>
+
+                        <th>
+                            Size
+                        </th>
+
+                        <th>
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for dress in dresses %}
+
+                    <tr>
+
+
+                        <!-- PHOTO -->
+
+                        <td>
+
+                            {% if dress.photo %}
+
+                                <img
+                                    src="{{ dress.photo.url }}"
+                                    class="dress-image"
+                                    alt="{{ dress.name }}"
+                                >
+
+                            {% else %}
+
+                                No Image
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- NAME -->
+
+                        <td>
+
+                            <div class="dress-name">
+                                {{ dress.name }}
+                            </div>
+
+                        </td>
+
+
+                        <!-- CATEGORY -->
+
+                        <td>
+
+                            <span class="category">
+                                {{ dress.category.name }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- COLOR -->
+
+                        <td>
+                            {{ dress.color }}
+                        </td>
+
+
+                        <!-- SIZE -->
+
+                        <td>
+                            {{ dress.size }}
+                        </td>
+
+
+                        <!-- ACTIONS -->
+
+                        <td>
+
+                            <div class="actions">
+
+
+                                <!-- EDIT -->
+
+                                <a
+                                    href="{% url 'edit_dress' dress.id %}"
+                                    class="action-btn edit"
+                                >
+                                    ✏️ Edit
+                                </a>
+
+
+                                <!-- DELETE -->
+
+                                <a
+                                    href="{% url 'delete_dress' dress.id %}"
+                                    class="action-btn delete"
+                                >
+                                    🗑️ Delete
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+
+            {% else %}
+
+                <!-- EMPTY STATE -->
+
+                <div class="empty">
+
+                    <h2>
+                        No Dresses Found
+                    </h2>
+
+                    <p>
+                        Add your first dress to the collection.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

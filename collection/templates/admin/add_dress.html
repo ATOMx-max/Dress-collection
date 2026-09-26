@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Dress | Dress Collection</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background: #f6f6f7;
+
+            color: #171717;
+
+            min-height: 100vh;
+        }
+
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+
+            height: 70px;
+
+            background: #ffffff;
+
+            border-bottom: 1px solid #e9e9e9;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 6%;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+        }
+
+
+        .brand {
+
+            text-decoration: none;
+
+            color: #111;
+
+            font-size: 22px;
+
+            font-weight: 700;
+        }
+
+
+        .back-btn {
+
+            text-decoration: none;
+
+            color: #222;
+
+            background: #f3f3f3;
+
+            padding: 9px 16px;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+
+        .back-btn:hover {
+
+            background: #e8e8e8;
+        }
+
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page {
+
+            width: min(900px, 92%);
+
+            margin: 45px auto 70px;
+        }
+
+
+        .page-header {
+
+            margin-bottom: 25px;
+        }
+
+
+        .page-header h1 {
+
+            font-size: 32px;
+
+            letter-spacing: -0.7px;
+
+            margin-bottom: 6px;
+        }
+
+
+        .page-header p {
+
+            color: #777;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           FORM CARD
+        ========================= */
+
+        .form-card {
+
+            background: #ffffff;
+
+            border: 1px solid #e8e8e8;
+
+            border-radius: 16px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 8px 30px
+                rgba(0, 0, 0, 0.05);
+        }
+
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 22px;
+        }
+
+
+        .form-group {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+
+        .form-group.full {
+
+            grid-column: 1 / -1;
+        }
+
+
+        .form-group label {
+
+            font-size: 13px;
+
+            font-weight: 650;
+
+            color: #333;
+        }
+
+
+        .required {
+
+            color: #d22;
+
+            margin-left: 2px;
+        }
+
+
+        input,
+        select,
+        textarea {
+
+            width: 100%;
+
+            border: 1px solid #dcdcdc;
+
+            border-radius: 9px;
+
+            padding: 12px 13px;
+
+            outline: none;
+
+            background: #fff;
+
+            color: #222;
+
+            font-size: 14px;
+
+            transition:
+                border-color 0.2s,
+                box-shadow 0.2s;
+        }
+
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+
+            border-color: #111;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(0, 0, 0, 0.06);
+        }
+
+
+        textarea {
+
+            min-height: 130px;
+
+            resize: vertical;
+        }
+
+
+        /* =========================
+           PHOTO UPLOAD
+        ========================= */
+
+        .upload-box {
+
+            border: 2px dashed #d5d5d5;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            text-align: center;
+
+            background: #fafafa;
+
+            transition: 0.25s;
+
+            cursor: pointer;
+        }
+
+
+        .upload-box:hover {
+
+            border-color: #999;
+
+            background: #f7f7f7;
+        }
+
+
+        .upload-icon {
+
+            font-size: 35px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .upload-box strong {
+
+            display: block;
+
+            font-size: 14px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .upload-box span {
+
+            display: block;
+
+            color: #888;
+
+            font-size: 12px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .upload-box input {
+
+            border: none;
+
+            padding: 0;
+
+            background: transparent;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           IMAGE PREVIEW
+        ========================= */
+
+        .preview-container {
+
+            display: none;
+
+            margin-top: 15px;
+
+            text-align: center;
+        }
+
+
+        .preview-container.active {
+
+            display: block;
+        }
+
+
+        .preview-image {
+
+            width: 180px;
+
+            height: 220px;
+
+            object-fit: cover;
+
+            border-radius: 10px;
+
+            border: 1px solid #ddd;
+
+            box-shadow:
+                0 5px 18px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .preview-name {
+
+            margin-top: 8px;
+
+            font-size: 12px;
+
+            color: #777;
+
+            word-break: break-word;
+        }
+
+
+        /* =========================
+           ERRORS
+        ========================= */
+
+        .field-errors {
+
+            color: #c62828;
+
+            font-size: 12px;
+
+            margin-top: 2px;
+        }
+
+
+        .non-field-errors {
+
+            background: #fff1f1;
+
+            border: 1px solid #ffd0d0;
+
+            color: #b71c1c;
+
+            padding: 12px 14px;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .form-actions {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 30px;
+
+            padding-top: 25px;
+
+            border-top: 1px solid #eeeeee;
+        }
+
+
+        .btn {
+
+            border: none;
+
+            border-radius: 8px;
+
+            padding: 12px 20px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            text-decoration: none;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            transition: 0.2s;
+        }
+
+
+        .btn-cancel {
+
+            background: #f1f1f1;
+
+            color: #333;
+        }
+
+
+        .btn-cancel:hover {
+
+            background: #e5e5e5;
+        }
+
+
+        .btn-save {
+
+            background: #111;
+
+            color: #fff;
+
+            cursor: pointer;
+        }
+
+
+        .btn-save:hover {
+
+            background: #333;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================
+           FINAL MOBILE POLISH
+        ========================= */
+
+        .upload-box input[type="file"] {
+            display: block;
+            width: 100%;
+            margin-top: 4px;
+            font-size: 13px;
+        }
+
+        .form-group select {
+            min-height: 46px;
+            cursor: pointer;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            min-height: 46px;
+        }
+
+        .form-group textarea {
+            min-height: 140px;
+        }
+
+        .btn {
+            min-height: 46px;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            .topbar {
+                padding: 0 16px;
+                gap: 12px;
+            }
+
+            .brand {
+                font-size: 18px;
+                white-space: nowrap;
+            }
+
+            .back-btn {
+                white-space: nowrap;
+                padding: 8px 10px;
+            }
+
+            .page {
+                width: calc(100% - 24px);
+                margin: 24px auto 40px;
+            }
+
+            .page-header {
+                margin-bottom: 18px;
+            }
+
+            .page-header h1 {
+                font-size: 25px;
+            }
+
+            .page-header p {
+                line-height: 1.5;
+            }
+
+            .form-card {
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            .form-grid {
+                gap: 16px;
+            }
+
+            .form-group label {
+                font-size: 13px;
+            }
+
+            input,
+            select,
+            textarea {
+                font-size: 16px;
+                min-height: 48px;
+            }
+
+            textarea {
+                min-height: 130px;
+            }
+
+            .upload-box {
+                padding: 20px 14px;
+            }
+
+            .upload-box input[type="file"] {
+                font-size: 13px;
+                min-height: auto;
+            }
+
+            .preview-image {
+                width: min(180px, 75vw);
+                height: min(220px, 92vw);
+            }
+
+            .form-actions {
+                gap: 10px;
+                margin-top: 24px;
+                padding-top: 20px;
+            }
+
+            .btn {
+                min-height: 48px;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .topbar {
+                padding: 0 12px;
+            }
+
+            .brand {
+                font-size: 16px;
+            }
+
+            .back-btn {
+                font-size: 11px;
+                padding: 7px 8px;
+            }
+
+            .page {
+                width: calc(100% - 18px);
+            }
+
+            .page-header h1 {
+                font-size: 23px;
+            }
+
+            .form-card {
+                padding: 13px;
+            }
+
+            .upload-box {
+                padding: 18px 10px;
+            }
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .topbar {
+
+                padding: 0 20px;
+
+                height: 65px;
+            }
+
+
+            .brand {
+
+                font-size: 19px;
+            }
+
+
+            .back-btn {
+
+                padding: 8px 12px;
+
+                font-size: 12px;
+            }
+
+
+            .page {
+
+                width: 92%;
+
+                margin: 30px auto 50px;
+            }
+
+
+            .page-header h1 {
+
+                font-size: 27px;
+            }
+
+
+            .form-card {
+
+                padding: 20px;
+
+                border-radius: 13px;
+            }
+
+
+            .form-grid {
+
+                grid-template-columns: 1fr;
+
+                gap: 18px;
+            }
+
+
+            .form-group.full {
+
+                grid-column: auto;
+            }
+
+
+            .form-actions {
+
+                flex-direction: column-reverse;
+            }
+
+
+            .btn {
+
+                width: 100%;
+            }
+
+
+            .preview-image {
+
+                width: 160px;
+
+                height: 200px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         TOPBAR
+    ========================= -->
+
+    <header class="topbar">
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="brand"
+        >
+            👗 Dress Collection
+        </a>
+
+
+        <a
+            href="{% url 'dashboard_dresses' %}"
+            class="back-btn"
+        >
+            ← Back to Dresses
+        </a>
+
+    </header>
+
+
+
+    <!-- =========================
+         PAGE
+    ========================= -->
+
+    <main class="page">
+
+
+        <div class="page-header">
+
+            <h1>
+                Add New Dress
+            </h1>
+
+
+            <p>
+                Add a dress to your personal collection.
+            </p>
+
+        </div>
+
+
+
+        <!-- =========================
+             FORM CARD
+        ========================= -->
+
+        <div class="form-card">
+
+
+            {% if form.non_field_errors %}
+
+                <div class="non-field-errors">
+
+                    {{ form.non_field_errors }}
+
+                </div>
+
+            {% endif %}
+
+
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                id="dressForm"
+            >
+
+                {% csrf_token %}
+
+
+
+                <div class="form-grid">
+
+
+                    <!-- NAME -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.name.id_for_label }}">
+
+                            Dress Name
+
+                            <span class="required">
+                                *
+                            </span>
+
+                        </label>
+
+
+                        {{ form.name }}
+
+
+                        {% if form.name.errors %}
+
+                            <div class="field-errors">
+
+                                {{ form.name.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.category.id_for_label }}">
+
+                            Category
+
+                            <span class="required">
+                                *
+                            </span>
+
+                        </label>
+
+
+                        {{ form.category }}
+
+
+                        {% if form.category.errors %}
+
+                            <div class="field-errors">
+
+                                {{ form.category.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- COLOR -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.color.id_for_label }}">
+
+                            Color
+
+                            <span class="required">
+                                *
+                            </span>
+
+                        </label>
+
+
+                        {{ form.color }}
+
+
+                        {% if form.color.errors %}
+
+                            <div class="field-errors">
+
+                                {{ form.color.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- SIZE -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.size.id_for_label }}">
+
+                            Size
+
+                            <span class="required">
+                                *
+                            </span>
+
+                        </label>
+
+
+                        {{ form.size }}
+
+
+                        {% if form.size.errors %}
+
+                            <div class="field-errors">
+
+                                {{ form.size.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="form-group full">
+
+                        <label for="{{ form.description.id_for_label }}">
+
+                            Description
+
+                        </label>
+
+
+                        {{ form.description }}
+
+
+                        {% if form.description.errors %}
+
+                            <div class="field-errors">
+
+                                {{ form.description.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- PHOTO -->
+
+                    <div class="form-group full">
+
+                        <label>
+
+                            Dress Photo
+
+                            <span class="required">
+                                *
+                            </span>
+
+                        </label>
+
+
+                        <label
+                            class="upload-box"
+                            for="{{ form.photo.id_for_label }}"
+                        >
+
+                            <div class="upload-icon">
+                                📷
+                            </div>
+
+
+                            <strong>
+                                Choose a dress photo
+                            </strong>
+
+
+                            <span>
+                                JPG, JPEG, PNG or WEBP
+                            </span>
+
+
+                            {{ form.photo }}
+
+                        </label>
+
+
+                        <div
+                            class="preview-container"
+                            id="previewContainer"
+                        >
+
+                            <img
+                                id="previewImage"
+                                class="preview-image"
+                                alt="Dress preview"
+                            >
+
+
+                            <div
+                                class="preview-name"
+                                id="previewName"
+                            ></div>
+
+                        </div>
+
+
+                        {% if form.photo.errors %}
+
+                            <div class="field-errors">
+
+                                {{ form.photo.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================
+                     ACTIONS
+                ========================= -->
+
+                <div class="form-actions">
+
+                    <a
+                        href="{% url 'dashboard_dresses' %}"
+                        class="btn btn-cancel"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-save"
+                    >
+                        + Add Dress
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================
+         IMAGE PREVIEW
+    ========================= -->
+
+    <script>
+
+        const photoInput =
+            document.getElementById(
+                "{{ form.photo.id_for_label }}"
+            );
+
+
+        const previewContainer =
+            document.getElementById(
+                "previewContainer"
+            );
+
+
+        const previewImage =
+            document.getElementById(
+                "previewImage"
+            );
+
+
+        const previewName =
+            document.getElementById(
+                "previewName"
+            );
+
+
+        const dressForm = document.getElementById("dressForm");
+
+        dressForm.addEventListener("submit", function () {
+            const submitButton = this.querySelector(".btn-save");
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = "Adding Dress...";
+                submitButton.style.opacity = "0.7";
+                submitButton.style.cursor = "wait";
+            }
+        });
+
+        photoInput.addEventListener(
+            "change",
+            function () {
+
+                const file = this.files[0];
+
+
+                if (!file) {
+
+                    previewContainer.classList.remove(
+                        "active"
+                    );
+
+                    return;
+                }
+
+
+                const allowedTypes = [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp"
+                ];
+
+
+                if (
+                    !allowedTypes.includes(
+                        file.type
+                    )
+                ) {
+
+                    alert(
+                        "Please select a JPG, PNG or WEBP image."
+                    );
+
+                    this.value = "";
+
+                    previewContainer.classList.remove(
+                        "active"
+                    );
+
+                    return;
+                }
+
+
+                const maxSize =
+                    5 * 1024 * 1024;
+
+
+                if (file.size > maxSize) {
+
+                    alert(
+                        "Image size must be less than 5 MB."
+                    );
+
+                    this.value = "";
+
+                    previewContainer.classList.remove(
+                        "active"
+                    );
+
+                    return;
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload = function (event) {
+
+                    previewImage.src =
+                        event.target.result;
+
+                    previewName.textContent =
+                        file.name;
+
+                    previewContainer.classList.add(
+                        "active"
+                    );
+                };
+
+
+                reader.readAsDataURL(file);
+
+            }
+        );
+
+    </script>
+
+
+</body>
+
+</html>

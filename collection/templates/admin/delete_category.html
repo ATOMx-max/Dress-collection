@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Delete Category | Dress Collection</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --dark: #111;
+            --text: #171717;
+            --muted: #777;
+            --danger: #d92d20;
+            --danger-dark: #b42318;
+            --danger-bg: #fff4f2;
+            --border: #e7e7e7;
+            --bg: #f6f7f9;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            color: var(--text);
+
+            background:
+                radial-gradient(
+                    circle at 10% 0%,
+                    rgba(217, 45, 32, 0.045),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 10%,
+                    rgba(17, 17, 17, 0.045),
+                    transparent 30%
+                ),
+                var(--bg);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            min-height: 72px;
+
+            padding: 10px 5%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+
+            background: rgba(17, 17, 17, 0.95);
+            color: white;
+
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+
+            box-shadow:
+                0 5px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 21px;
+            font-weight: 750;
+            letter-spacing: -0.4px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background: white;
+            color: var(--dark);
+
+            font-size: 21px;
+
+            box-shadow:
+                0 5px 16px rgba(0, 0, 0, 0.16);
+        }
+
+        .dashboard-btn {
+            min-height: 40px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 9px 15px;
+
+            border-radius: 999px;
+
+            background: white;
+            color: var(--dark);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .dashboard-btn:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 20px rgba(255, 255, 255, 0.14);
+        }
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page {
+            width: min(680px, calc(100% - 30px));
+            margin: 0 auto;
+
+            padding: 55px 0 70px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            margin-bottom: 20px;
+
+            color: #666;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #111;
+            transform: translateX(-3px);
+        }
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .card {
+            position: relative;
+            overflow: hidden;
+
+            background: rgba(255, 255, 255, 0.94);
+
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            border-radius: 24px;
+
+            padding: 42px 38px;
+
+            text-align: center;
+
+            box-shadow:
+                0 20px 55px rgba(0, 0, 0, 0.08);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .card::before {
+            content: "";
+
+            position: absolute;
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 4px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ff6b5f,
+                    var(--danger),
+                    #8f1510
+                );
+        }
+
+        .icon-wrapper {
+            width: 76px;
+            height: 76px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 22px;
+
+            background: var(--danger-bg);
+
+            box-shadow:
+                0 10px 25px rgba(217, 45, 32, 0.10);
+        }
+
+        .icon {
+            font-size: 37px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+
+            padding: 7px 12px;
+            margin-bottom: 14px;
+
+            border-radius: 999px;
+
+            background: #fff0ee;
+            color: var(--danger-dark);
+
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin-bottom: 12px;
+
+            font-size: clamp(28px, 5vw, 36px);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .description {
+            max-width: 480px;
+
+            margin: 0 auto;
+
+            color: var(--muted);
+
+            font-size: 15px;
+            line-height: 1.65;
+        }
+
+        .category-name {
+            color: #111;
+            font-weight: 800;
+            word-break: break-word;
+        }
+
+        /* =========================
+           WARNING
+        ========================= */
+
+        .warning {
+            margin-top: 25px;
+
+            padding: 16px 18px;
+
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+
+            text-align: left;
+
+            background: var(--danger-bg);
+
+            border: 1px solid #ffd3ce;
+            border-radius: 14px;
+
+            color: var(--danger-dark);
+
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .warning-icon {
+            flex: 0 0 auto;
+            font-size: 17px;
+            line-height: 1.4;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .buttons {
+            margin-top: 28px;
+
+            display: flex;
+            justify-content: center;
+            gap: 11px;
+        }
+
+        .delete-form {
+            margin: 0;
+        }
+
+        button,
+        .cancel {
+            min-width: 145px;
+            min-height: 48px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 19px;
+
+            border-radius: 11px;
+
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 750;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        button {
+            border: 1px solid var(--danger);
+
+            background: var(--danger);
+            color: white;
+
+            box-shadow:
+                0 8px 20px rgba(217, 45, 32, 0.18);
+        }
+
+        button:hover {
+            background: var(--danger-dark);
+            border-color: var(--danger-dark);
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 11px 25px rgba(217, 45, 32, 0.24);
+        }
+
+        button:disabled {
+            opacity: 0.65;
+            cursor: wait;
+            transform: none;
+        }
+
+        .cancel {
+            border: 1px solid #dedede;
+
+            background: white;
+            color: #555;
+        }
+
+        .cancel:hover {
+            background: #f5f5f5;
+            color: #111;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 7px 18px rgba(0, 0, 0, 0.07);
+        }
+
+        /* =========================
+           EXTRA INFO
+        ========================= */
+
+        .safe-note {
+            margin-top: 20px;
+
+            color: #999;
+
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+            .topbar {
+                min-height: 64px;
+                padding: 9px 14px;
+            }
+
+            .brand {
+                gap: 9px;
+                font-size: 17px;
+            }
+
+            .brand-icon {
+                width: 36px;
+                height: 36px;
+
+                border-radius: 10px;
+
+                font-size: 18px;
+            }
+
+            .dashboard-btn {
+                min-height: 38px;
+
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+
+            .page {
+                width: calc(100% - 22px);
+
+                padding: 28px 0 45px;
+            }
+
+            .back-link {
+                margin-bottom: 16px;
+                font-size: 13px;
+            }
+
+            .card {
+                padding: 35px 19px;
+                border-radius: 18px;
+            }
+
+            .icon-wrapper {
+                width: 67px;
+                height: 67px;
+
+                border-radius: 19px;
+
+                margin-bottom: 17px;
+            }
+
+            .icon {
+                font-size: 32px;
+            }
+
+            .eyebrow {
+                margin-bottom: 11px;
+                font-size: 9px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .description {
+                font-size: 13px;
+            }
+
+            .warning {
+                padding: 14px;
+
+                gap: 9px;
+
+                font-size: 12px;
+                border-radius: 12px;
+            }
+
+            .buttons {
+                flex-direction: column-reverse;
+                gap: 9px;
+            }
+
+            button,
+            .cancel {
+                width: 100%;
+                min-height: 50px;
+            }
+
+            .safe-note {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .topbar {
+                padding: 8px 10px;
+            }
+
+            .brand {
+                font-size: 15px;
+            }
+
+            .brand-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .dashboard-btn {
+                padding: 7px 10px;
+                font-size: 10px;
+            }
+
+            .page {
+                width: calc(100% - 16px);
+                padding-top: 22px;
+            }
+
+            .card {
+                padding: 31px 14px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                👗
+            </div>
+
+            Dress Collection
+
+        </div>
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="dashboard-btn"
+        >
+            📊 Dashboard
+        </a>
+
+    </header>
+
+
+    <main class="page">
+
+        <a
+            href="{% url 'category_list' %}"
+            class="back-link"
+        >
+            ← Back to Categories
+        </a>
+
+
+        <div class="card">
+
+            <div class="icon-wrapper">
+                <div class="icon">
+                    🗑️
+                </div>
+            </div>
+
+            <div class="eyebrow">
+                Category Management
+            </div>
+
+            <h1>
+                Delete Category?
+            </h1>
+
+            <p class="description">
+                Are you sure you want to delete
+                <span class="category-name">
+                    "{{ category.name }}"
+                </span>?
+            </p>
+
+
+            <div class="warning">
+
+                <div class="warning-icon">
+                    ⚠️
+                </div>
+
+                <div>
+                    <strong>
+                        This action cannot be undone.
+                    </strong>
+
+                    Deleting this category will also delete
+                    the dresses associated with that category.
+                </div>
+
+            </div>
+
+
+            <div class="buttons">
+
+                <a
+                    href="{% url 'category_list' %}"
+                    class="cancel"
+                >
+                    Cancel
+                </a>
+
+
+                <form
+                    method="post"
+                    class="delete-form"
+                    id="deleteCategoryForm"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        id="deleteButton"
+                    >
+                        🗑️ Yes, Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <div class="safe-note">
+                Please make sure you have selected the correct category before continuing.
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script>
+        const deleteForm =
+            document.getElementById("deleteCategoryForm");
+
+        if (deleteForm) {
+
+            deleteForm.addEventListener(
+                "submit",
+                function () {
+
+                    const button =
+                        document.getElementById("deleteButton");
+
+                    if (button) {
+                        button.disabled = true;
+                        button.textContent = "Deleting...";
+                    }
+
+                }
+            );
+
+        }
+    </script>
+
+</body>
+
+</html>

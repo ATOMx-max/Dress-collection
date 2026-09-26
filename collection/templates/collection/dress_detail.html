@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ dress.name }} | Dress Collection
+    </title>
+
+
+    <style>
+
+        /* =========================
+           RESET
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f8f8f8;
+
+            color: #222;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+
+            height: 70px;
+
+            background: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 6%;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
+            box-shadow:
+                0 2px 10px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        .logo {
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            color: #111;
+
+            text-decoration: none;
+        }
+
+
+        .nav-links {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 25px;
+        }
+
+
+        .nav-links a {
+
+            text-decoration: none;
+
+            color: #333;
+
+            font-size: 15px;
+
+            font-weight: 500;
+        }
+
+
+        .admin-btn {
+
+            background: #111;
+
+            color: white !important;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+        }
+
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .detail-section {
+
+            max-width: 1150px;
+
+            margin: auto;
+
+            padding: 60px 20px 80px;
+        }
+
+
+        /* =========================
+           BACK BUTTON
+        ========================= */
+
+        .back-link {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            text-decoration: none;
+
+            color: #555;
+
+            font-size: 15px;
+
+            margin-bottom: 30px;
+
+            transition: 0.3s;
+        }
+
+
+        .back-link:hover {
+
+            color: #111;
+
+            transform:
+                translateX(-4px);
+        }
+
+
+        /* =========================
+           DETAIL CARD
+        ========================= */
+
+        .detail-card {
+
+            background: white;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            box-shadow:
+                0 8px 30px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* =========================
+           IMAGE
+        ========================= */
+
+        .detail-image-container {
+
+            background: #f1f1f1;
+
+            min-height: 600px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            overflow: hidden;
+        }
+
+
+        .detail-image {
+
+            width: 100%;
+
+            height: 600px;
+
+            object-fit: cover;
+
+            display: block;
+
+            transition:
+                transform 0.5s ease;
+        }
+
+
+        .detail-image-container:hover
+        .detail-image {
+
+            transform:
+                scale(1.03);
+        }
+
+
+        /* =========================
+           INFORMATION
+        ========================= */
+
+        .detail-info {
+
+            padding: 55px 50px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+        }
+
+
+        .category-badge {
+
+            display: inline-block;
+
+            width: fit-content;
+
+            background: #f1f1f1;
+
+            color: #555;
+
+            padding: 7px 13px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .detail-info h1 {
+
+            font-size: 42px;
+
+            line-height: 1.15;
+
+            margin-bottom: 20px;
+
+            color: #111;
+        }
+
+
+        .description {
+
+            color: #666;
+
+            font-size: 16px;
+
+            line-height: 1.7;
+
+            margin-bottom: 35px;
+        }
+
+
+        /* =========================
+           DETAILS
+        ========================= */
+
+        .details-box {
+
+            border-top:
+                1px solid #eee;
+
+            border-bottom:
+                1px solid #eee;
+
+            margin-bottom: 30px;
+        }
+
+
+        .detail-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 17px 0;
+
+            border-bottom:
+                1px solid #eee;
+        }
+
+
+        .detail-row:last-child {
+
+            border-bottom: none;
+        }
+
+
+        .detail-label {
+
+            color: #777;
+
+            font-size: 14px;
+        }
+
+
+        .detail-value {
+
+            font-weight: 600;
+
+            color: #222;
+        }
+
+
+        /* =========================
+           COLLECTION BUTTON
+        ========================= */
+
+        .collection-btn {
+
+            display: inline-block;
+
+            text-align: center;
+
+            text-decoration: none;
+
+            background: #111;
+
+            color: white;
+
+            padding: 14px 25px;
+
+            border-radius: 9px;
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            transition: 0.3s;
+        }
+
+
+        .collection-btn:hover {
+
+            background: #333;
+
+            transform:
+                translateY(-2px);
+        }
+
+
+        /* =========================
+           RELATED SECTION
+        ========================= */
+
+        .related-section {
+
+            margin-top: 80px;
+        }
+
+
+        .related-title {
+
+            text-align: center;
+
+            margin-bottom: 35px;
+        }
+
+
+        .related-title h2 {
+
+            font-size: 30px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .related-title p {
+
+            color: #777;
+        }
+
+
+        .related-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 25px;
+        }
+
+
+        .related-card {
+
+            background: white;
+
+            border-radius: 14px;
+
+            overflow: hidden;
+
+            text-decoration: none;
+
+            color: inherit;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.07);
+
+            transition: 0.3s;
+        }
+
+
+        .related-card:hover {
+
+            transform:
+                translateY(-5px);
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 0, 0, 0.12);
+        }
+
+
+        .related-card img {
+
+            width: 100%;
+
+            height: 280px;
+
+            object-fit: cover;
+
+            display: block;
+        }
+
+
+        .related-info {
+
+            padding: 18px;
+        }
+
+
+        .related-info h3 {
+
+            font-size: 18px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .related-info p {
+
+            color: #777;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+
+            background: #111;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 30px 20px;
+
+            margin-top: 30px;
+        }
+
+
+        /* =========================
+           TABLET
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .detail-card {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .detail-image-container {
+
+                min-height: 500px;
+            }
+
+
+            .detail-image {
+
+                height: 500px;
+            }
+
+
+            .detail-info {
+
+                padding: 45px 35px;
+            }
+
+
+            .related-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .navbar {
+
+                height: 65px;
+
+                padding: 0 20px;
+            }
+
+
+            .nav-links {
+
+                display: none;
+            }
+
+
+            .logo {
+
+                font-size: 21px;
+            }
+
+
+            .detail-section {
+
+                padding:
+                    35px 15px 60px;
+            }
+
+
+            .detail-card {
+
+                border-radius: 14px;
+            }
+
+
+            .detail-image-container {
+
+                min-height: 420px;
+            }
+
+
+            .detail-image {
+
+                height: 420px;
+            }
+
+
+            .detail-info {
+
+                padding: 30px 22px;
+            }
+
+
+            .detail-info h1 {
+
+                font-size: 32px;
+            }
+
+
+            .description {
+
+                font-size: 15px;
+
+                margin-bottom: 25px;
+            }
+
+
+            .detail-row {
+
+                padding: 14px 0;
+            }
+
+
+            .collection-btn {
+
+                width: 100%;
+            }
+
+
+            .related-section {
+
+                margin-top: 55px;
+            }
+
+
+            .related-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .related-card img {
+
+                height: 330px;
+            }
+
+        }
+
+
+        /* =========================
+           DETAIL ACTIONS
+        ========================= */
+
+        .detail-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .edit-detail-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            text-decoration: none;
+            background: #f1f1f1;
+            color: #222;
+            padding: 14px 20px;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: 0.3s;
+            border: 1px solid #e3e3e3;
+        }
+
+        .edit-detail-btn:hover {
+            background: #e7e7e7;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+
+            .detail-actions {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .edit-detail-btn,
+            .collection-btn {
+                width: 100%;
+                min-height: 46px;
+            }
+        }
+
+        /* =========================
+           FINAL MOBILE POLISH
+           Keeps the existing detail page content unchanged.
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            body {
+                overflow-x: hidden;
+            }
+
+            .navbar {
+                height: 62px;
+                padding: 0 14px;
+            }
+
+            .logo {
+                max-width: 210px;
+                font-size: 19px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .detail-section {
+                width: 100%;
+                padding: 25px 12px 50px;
+            }
+
+            .back-link {
+                min-height: 42px;
+                margin-bottom: 18px;
+                padding: 8px 2px;
+                font-size: 13px;
+            }
+
+            .detail-card {
+                width: 100%;
+                border-radius: 13px;
+            }
+
+            .detail-image-container {
+                min-height: 0;
+                height: auto;
+                aspect-ratio: 4 / 5;
+            }
+
+            .detail-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .detail-image-container:hover .detail-image {
+                transform: none;
+            }
+
+            .detail-info {
+                padding: 24px 18px 25px;
+            }
+
+            .category-badge {
+                margin-bottom: 12px;
+                padding: 6px 11px;
+                font-size: 11px;
+            }
+
+            .detail-info h1 {
+                font-size: 29px;
+                line-height: 1.15;
+                margin-bottom: 14px;
+                overflow-wrap: anywhere;
+            }
+
+            .description {
+                font-size: 14px;
+                line-height: 1.65;
+                margin-bottom: 22px;
+            }
+
+            .details-box {
+                margin-bottom: 22px;
+            }
+
+            .detail-row {
+                min-height: 48px;
+                padding: 12px 0;
+                gap: 15px;
+            }
+
+            .detail-label,
+            .detail-value {
+                font-size: 13px;
+            }
+
+            .detail-value {
+                text-align: right;
+                overflow-wrap: anywhere;
+            }
+
+            .collection-btn {
+                width: 100%;
+                min-height: 46px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+
+            .related-section {
+                margin-top: 42px;
+            }
+
+            .related-title {
+                margin-bottom: 22px;
+            }
+
+            .related-title h2 {
+                font-size: 25px;
+                line-height: 1.2;
+            }
+
+            .related-title p {
+                font-size: 13px;
+            }
+
+            .related-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .related-card {
+                border-radius: 12px;
+            }
+
+            .related-card:hover {
+                transform: none;
+            }
+
+            .related-card img {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 4 / 5;
+                object-fit: cover;
+            }
+
+            .related-info {
+                padding: 14px;
+            }
+
+            .related-info h3 {
+                font-size: 17px;
+                margin-bottom: 5px;
+            }
+
+            .related-info p {
+                font-size: 12px;
+            }
+
+            footer {
+                margin-top: 10px;
+                padding: 25px 15px;
+            }
+
+            footer p {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            .navbar {
+                height: 59px;
+                padding: 0 11px;
+            }
+
+            .logo {
+                font-size: 17px;
+                max-width: 185px;
+            }
+
+            .detail-section {
+                padding-left: 9px;
+                padding-right: 9px;
+            }
+
+            .detail-info {
+                padding: 21px 15px 22px;
+            }
+
+            .detail-info h1 {
+                font-size: 26px;
+            }
+
+            .description {
+                font-size: 13px;
+            }
+
+            .detail-row {
+                padding: 11px 0;
+            }
+
+            .detail-label,
+            .detail-value {
+                font-size: 12px;
+            }
+
+            .related-title h2 {
+                font-size: 23px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVBAR
+    ========================= -->
+
+    <nav class="navbar">
+
+
+        <a
+            href="{% url 'home' %}"
+            class="logo"
+        >
+            Dress Collection
+        </a>
+
+
+        <div class="nav-links">
+
+
+            <a href="{% url 'home' %}">
+                Home
+            </a>
+
+
+            <a href="{% url 'home' %}#collection">
+                Collection
+            </a>
+
+
+            <a
+                href="/admin/"
+                class="admin-btn"
+            >
+                Admin
+            </a>
+
+
+        </div>
+
+
+    </nav>
+
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main class="detail-section">
+
+
+        <!-- Back -->
+
+        <a
+            href="{% url 'home' %}"
+            class="back-link"
+        >
+            ← Back to Collection
+        </a>
+
+
+        <!-- =========================
+             DRESS DETAIL
+        ========================= -->
+
+        <div class="detail-card">
+
+
+            <!-- Image -->
+
+            <div class="detail-image-container">
+
+
+                {% if dress.photo %}
+
+
+                <img
+                    src="{{ dress.photo.url }}"
+                    alt="{{ dress.name }}"
+                    class="detail-image"
+                >
+
+
+                {% else %}
+
+
+                <div>
+                    No Image Available
+                </div>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+            <!-- Information -->
+
+            <div class="detail-info">
+
+
+                <span class="category-badge">
+
+                    {{ dress.category.name }}
+
+                </span>
+
+
+                <h1>
+
+                    {{ dress.name }}
+
+                </h1>
+
+
+                {% if dress.description %}
+
+
+                <p class="description">
+
+                    {{ dress.description }}
+
+                </p>
+
+
+                {% else %}
+
+
+                <p class="description">
+
+                    Discover more details about
+                    this beautiful addition to
+                    our collection.
+
+                </p>
+
+
+                {% endif %}
+
+
+                <!-- Details -->
+
+                <div class="details-box">
+
+
+                    <div class="detail-row">
+
+
+                        <span class="detail-label">
+                            Category
+                        </span>
+
+
+                        <span class="detail-value">
+
+                            {{ dress.category.name }}
+
+                        </span>
+
+
+                    </div>
+
+
+                    <div class="detail-row">
+
+
+                        <span class="detail-label">
+                            Color
+                        </span>
+
+
+                        <span class="detail-value">
+
+                            {{ dress.color }}
+
+                        </span>
+
+
+                    </div>
+
+
+                    <div class="detail-row">
+
+
+                        <span class="detail-label">
+                            Size
+                        </span>
+
+
+                        <span class="detail-value">
+
+                            {{ dress.size }}
+
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="detail-actions">
+
+                    <a
+                        href="{% url 'edit_dress' dress.id %}"
+                        class="edit-detail-btn"
+                    >
+                        ✏️ Edit Dress
+                    </a>
+
+                    <a
+                        href="{% url 'home' %}#collection"
+                        class="collection-btn"
+                    >
+                        Explore More Dresses
+                    </a>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =========================
+             RELATED DRESSES
+        ========================= -->
+
+        <section class="related-section">
+
+
+            <div class="related-title">
+
+
+                <h2>
+                    More From This Category
+                </h2>
+
+
+                <p>
+                    Explore other dresses
+                    you may like
+                </p>
+
+
+            </div>
+
+
+            <div class="related-grid">
+
+
+                {% for related_dress in dress.category.dresses.all %}
+
+
+                    {% if related_dress.id != dress.id %}
+
+
+                    <a
+                        href="{% url 'dress_detail' related_dress.id %}"
+                        class="related-card"
+                    >
+
+
+                        {% if related_dress.photo %}
+
+
+                        <img
+                            src="{{ related_dress.photo.url }}"
+                            alt="{{ related_dress.name }}"
+                        >
+
+
+                        {% endif %}
+
+
+                        <div class="related-info">
+
+
+                            <h3>
+
+                                {{ related_dress.name }}
+
+                            </h3>
+
+
+                            <p>
+
+                                {{ related_dress.color }}
+                                ·
+                                {{ related_dress.size }}
+
+                            </p>
+
+
+                        </div>
+
+
+                    </a>
+
+
+                    {% endif %}
+
+
+                {% empty %}
+
+
+                    <p>
+                        No other dresses in
+                        this category yet.
+                    </p>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        <p>
+
+            © 2026 Dress Collection.
+            All rights reserved.
+
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>
