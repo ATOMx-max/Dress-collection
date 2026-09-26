@@ -50,11 +50,7 @@ def create_default_categories(user):
 @login_required(login_url='login')
 def home(request):
 
-    # Make sure default categories exist
-    # for the current user
-    create_default_categories(request.user)
-
-    # Only show dresses belonging to logged-in user
+    # Only current user's dresses
     dresses = (
         Dress.objects
         .filter(user=request.user)
@@ -62,14 +58,14 @@ def home(request):
         .order_by('-created_at')
     )
 
-    # Only show categories belonging to logged-in user
+    # Only current user's categories
     categories = (
         Category.objects
         .filter(user=request.user)
         .order_by('name')
     )
 
-    # Only show colors used by logged-in user
+    # Colors used by current user
     colors = (
         Dress.objects
         .filter(user=request.user)
@@ -78,13 +74,23 @@ def home(request):
         .order_by('color')
     )
 
-    # Only show sizes used by logged-in user
+    # Sizes used by current user
     sizes = (
         Dress.objects
         .filter(user=request.user)
         .values_list('size', flat=True)
         .distinct()
         .order_by('size')
+    )
+
+    # Current user's favorite dresses
+    favorite_ids = set(
+        Favorite.objects
+        .filter(
+            user=request.user,
+            dress__user=request.user
+        )
+        .values_list('dress_id', flat=True)
     )
 
     return render(
@@ -95,12 +101,7 @@ def home(request):
             'categories': categories,
             'colors': colors,
             'sizes': sizes,
-            'favorite_ids': set(
-                Favorite.objects.filter(
-                    user=request.user,
-                    dress__in=dresses
-                ).values_list('dress_id', flat=True)
-            ),
+            'favorite_ids': favorite_ids,
         }
     )
 
@@ -112,9 +113,8 @@ def home(request):
 @login_required(login_url='login')
 def dress_detail(request, dress_id):
 
-    # User can only open their own dress
     dress = get_object_or_404(
-        Dress,
+        Dress.objects.select_related('category'),
         id=dress_id,
         user=request.user
     )
@@ -135,20 +135,14 @@ def dress_detail(request, dress_id):
 @login_required(login_url='login')
 def admin_dashboard(request):
 
-    # Make sure default categories exist
-    create_default_categories(request.user)
-
-    # Only current user's dresses
     dresses = Dress.objects.filter(
         user=request.user
     )
 
-    # Only current user's categories
     categories = Category.objects.filter(
         user=request.user
     )
 
-    # Only current user's recent dresses
     recent_dresses = (
         Dress.objects
         .filter(user=request.user)
@@ -174,10 +168,6 @@ def admin_dashboard(request):
 @login_required(login_url='login')
 def dashboard_dresses(request):
 
-    # Make sure default categories exist
-    create_default_categories(request.user)
-
-    # Only current user's dresses
     dresses = (
         Dress.objects
         .filter(user=request.user)
@@ -201,9 +191,6 @@ def dashboard_dresses(request):
 @login_required(login_url='login')
 def add_dress(request):
 
-    # Make sure default categories exist
-    create_default_categories(request.user)
-
     if request.method == 'POST':
 
         form = DressForm(
@@ -216,24 +203,18 @@ def add_dress(request):
 
             try:
 
-                # Create dress object without saving first
                 dress = form.save(commit=False)
 
-                # Assign logged-in user
                 dress.user = request.user
 
-                # Save dress and upload image
                 dress.save()
 
-                # Success
                 return redirect('dashboard_dresses')
 
             except Exception as e:
 
-                # Write complete error to logs
                 logger.exception("ADD DRESS ERROR")
 
-                # Temporarily display the actual error
                 return HttpResponse(
                     f"""
                     <html>
@@ -296,7 +277,6 @@ def add_dress(request):
 @login_required(login_url='login')
 def edit_dress(request, dress_id):
 
-    # Only allow editing user's own dress
     dress = get_object_or_404(
         Dress,
         id=dress_id,
@@ -318,7 +298,6 @@ def edit_dress(request, dress_id):
                 commit=False
             )
 
-            # Keep ownership with current user
             dress.user = request.user
 
             dress.save()
@@ -351,7 +330,6 @@ def edit_dress(request, dress_id):
 @login_required(login_url='login')
 def delete_dress(request, dress_id):
 
-    # Only allow deleting user's own dress
     dress = get_object_or_404(
         Dress,
         id=dress_id,
@@ -382,10 +360,6 @@ def delete_dress(request, dress_id):
 @login_required(login_url='login')
 def category_list(request):
 
-    # Make sure default categories exist
-    create_default_categories(request.user)
-
-    # Get only current user's categories
     categories = (
         Category.objects
         .filter(user=request.user)
@@ -445,7 +419,6 @@ def add_category(request):
 @login_required(login_url='login')
 def edit_category(request, category_id):
 
-    # Only allow editing user's own category
     category = get_object_or_404(
         Category,
         id=category_id,
@@ -491,7 +464,6 @@ def edit_category(request, category_id):
 @login_required(login_url='login')
 def delete_category(request, category_id):
 
-    # Only allow deleting user's own category
     category = get_object_or_404(
         Category,
         id=category_id,
@@ -580,7 +552,6 @@ def favorite_list(request):
 
 def register(request):
 
-    # Already logged-in users don't need registration
     if request.user.is_authenticated:
 
         return redirect(
@@ -688,9 +659,7 @@ def register(request):
         # CREATE DEFAULT CATEGORIES
         # =================================================
 
-        create_default_categories(
-            user
-        )
+        create_default_categories(user)
 
         # =================================================
         # REGISTRATION SUCCESS
@@ -704,10 +673,6 @@ def register(request):
         return redirect(
             'login'
         )
-
-    # =====================================================
-    # REGISTRATION PAGE
-    # =====================================================
 
     return render(
         request,
