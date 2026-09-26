@@ -5,3 +5,4 @@ python-dotenv
 Pillow
 psycopg[binary]
 mysqlclient
+dj-database-url
