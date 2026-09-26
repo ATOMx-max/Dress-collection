@@ -38,11 +38,7 @@ def assign_existing_data_to_user(apps, schema_editor):
         )
 
     if user is None:
-
-        raise RuntimeError(
-            'No Django user exists. '
-            'Please create a user before running this migration.'
-        )
+        return
 
     # Assign existing categories
     Category.objects.filter(
