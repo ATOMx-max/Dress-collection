@@ -1,0 +1,7 @@
+Django==6.1.1
+gunicorn
+whitenoise
+python-dotenv
+Pillow
+psycopg[binary]
+mysqlclient

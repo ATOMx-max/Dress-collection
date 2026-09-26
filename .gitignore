@@ -21,3 +21,5 @@ media/
 # IDE
 .vscode/
 .idea/
+# Collected static files
+staticfiles/
