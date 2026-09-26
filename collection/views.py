@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.models import User
@@ -6,6 +7,10 @@ from django.contrib import messages
 
 from .models import Category, Dress, Favorite
 from .forms import DressForm
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # =========================================================
@@ -209,18 +214,65 @@ def add_dress(request):
 
         if form.is_valid():
 
-            dress = form.save(
-                commit=False
-            )
+            try:
 
-            # Assign the logged-in user
-            dress.user = request.user
+                # Create dress object without saving first
+                dress = form.save(commit=False)
 
-            dress.save()
+                # Assign logged-in user
+                dress.user = request.user
 
-            return redirect(
-                'dashboard_dresses'
-            )
+                # Save dress and upload image
+                dress.save()
+
+                # Success
+                return redirect('dashboard_dresses')
+
+            except Exception as e:
+
+                # Write complete error to logs
+                logger.exception("ADD DRESS ERROR")
+
+                # Temporarily display the actual error
+                return HttpResponse(
+                    f"""
+                    <html>
+                    <head>
+                        <title>Add Dress Error</title>
+                    </head>
+
+                    <body style="
+                        font-family: Arial, sans-serif;
+                        padding: 40px;
+                        background: #f8fafc;
+                    ">
+
+                        <h2 style="
+                            color: #dc2626;
+                        ">
+                            Add Dress Error
+                        </h2>
+
+                        <pre style="
+                            background: #111827;
+                            color: #f9fafb;
+                            padding: 20px;
+                            border-radius: 10px;
+                            overflow: auto;
+                            white-space: pre-wrap;
+                        ">{e}</pre>
+
+                        <br>
+
+                        <a href="/dashboard/dresses/">
+                            ← Back to Dresses
+                        </a>
+
+                    </body>
+                    </html>
+                    """,
+                    status=500
+                )
 
     else:
 
@@ -232,7 +284,7 @@ def add_dress(request):
         request,
         'admin/add_dress.html',
         {
-            'form': form,
+            'form': form
         }
     )
 
@@ -462,8 +514,14 @@ def delete_category(request, category_id):
         }
     )
 
-@login_required
+
+# =========================================================
+# FAVORITES
+# =========================================================
+
+@login_required(login_url='login')
 def toggle_favorite(request, dress_id):
+
     dress = get_object_or_404(
         Dress,
         id=dress_id,
@@ -476,22 +534,34 @@ def toggle_favorite(request, dress_id):
     ).first()
 
     if favorite:
+
         favorite.delete()
+
     else:
+
         Favorite.objects.create(
             user=request.user,
             dress=dress
         )
 
-    return redirect(request.META.get('HTTP_REFERER', 'home'))
+    return redirect(
+        request.META.get(
+            'HTTP_REFERER',
+            'home'
+        )
+    )
 
 
 @login_required(login_url='login')
 def favorite_list(request):
+
     favorites = (
         Favorite.objects
         .filter(user=request.user)
-        .select_related('dress', 'dress__category')
+        .select_related(
+            'dress',
+            'dress__category'
+        )
         .order_by('-created_at')
     )
 
@@ -502,6 +572,8 @@ def favorite_list(request):
             'favorites': favorites,
         }
     )
+
+
 # =========================================================
 # CREATE NEW USER
 # =========================================================
@@ -510,7 +582,10 @@ def register(request):
 
     # Already logged-in users don't need registration
     if request.user.is_authenticated:
-        return redirect('admin_dashboard')
+
+        return redirect(
+            'admin_dashboard'
+        )
 
     if request.method == 'POST':
 
@@ -534,7 +609,6 @@ def register(request):
             ''
         )
 
-
         # =================================================
         # USERNAME VALIDATION
         # =================================================
@@ -546,8 +620,9 @@ def register(request):
                 'Username is required.'
             )
 
-            return redirect('register')
-
+            return redirect(
+                'register'
+            )
 
         if User.objects.filter(
             username=username
@@ -558,8 +633,9 @@ def register(request):
                 'Username already exists.'
             )
 
-            return redirect('register')
-
+            return redirect(
+                'register'
+            )
 
         # =================================================
         # PASSWORD VALIDATION
@@ -572,8 +648,9 @@ def register(request):
                 'Password is required.'
             )
 
-            return redirect('register')
-
+            return redirect(
+                'register'
+            )
 
         if password != confirm_password:
 
@@ -582,8 +659,9 @@ def register(request):
                 'Passwords do not match.'
             )
 
-            return redirect('register')
-
+            return redirect(
+                'register'
+            )
 
         if len(password) < 8:
 
@@ -592,8 +670,9 @@ def register(request):
                 'Password must contain at least 8 characters.'
             )
 
-            return redirect('register')
-
+            return redirect(
+                'register'
+            )
 
         # =================================================
         # CREATE USER
@@ -605,13 +684,13 @@ def register(request):
             password=password
         )
 
-
         # =================================================
         # CREATE DEFAULT CATEGORIES
         # =================================================
 
-        create_default_categories(user)
-
+        create_default_categories(
+            user
+        )
 
         # =================================================
         # REGISTRATION SUCCESS
@@ -622,8 +701,9 @@ def register(request):
             'Account created successfully. Please login.'
         )
 
-        return redirect('login')
-
+        return redirect(
+            'login'
+        )
 
     # =====================================================
     # REGISTRATION PAGE
