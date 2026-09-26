@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+# =========================================================
+# CATEGORY
+# =========================================================
+
 class Category(models.Model):
 
     user = models.ForeignKey(
@@ -18,9 +22,20 @@ class Category(models.Model):
         blank=True
     )
 
+    class Meta:
+        indexes = [
+            models.Index(
+                fields=['user', 'name']
+            ),
+        ]
+
     def __str__(self):
         return self.name
 
+
+# =========================================================
+# DRESS
+# =========================================================
 
 class Dress(models.Model):
 
@@ -60,9 +75,40 @@ class Dress(models.Model):
         auto_now_add=True
     )
 
+    class Meta:
+        indexes = [
+
+            # Faster dashboard/home sorting
+            models.Index(
+                fields=['user', '-created_at']
+            ),
+
+            # Faster category filtering
+            models.Index(
+                fields=['user', 'category']
+            ),
+
+            # Faster color filtering
+            models.Index(
+                fields=['user', 'color']
+            ),
+
+            # Faster size filtering
+            models.Index(
+                fields=['user', 'size']
+            ),
+        ]
+
     def __str__(self):
         return self.name
+
+
+# =========================================================
+# FAVORITE
+# =========================================================
+
 class Favorite(models.Model):
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -75,11 +121,31 @@ class Favorite(models.Model):
         related_name='favorited_by'
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     class Meta:
-        unique_together = ('user', 'dress')
-        ordering = ['-created_at']
+
+        # Prevent the same user from
+        # favoriting the same dress twice
+        unique_together = (
+            'user',
+            'dress'
+        )
+
+        # Newest favorites first
+        ordering = [
+            '-created_at'
+        ]
+
+        indexes = [
+
+            # Faster user's favorite list
+            models.Index(
+                fields=['user', '-created_at']
+            ),
+        ]
 
     def __str__(self):
         return f"{self.user.username} - {self.dress.name}"
