@@ -224,7 +224,7 @@ if USE_S3:
     # Keep the bucket private and generate temporary URLs
     AWS_QUERYSTRING_AUTH = True
 
-    AWS_S3_FILE_OVERWRITE = False
+    AWS_S3_FILE_OVERWRITE = True
 
     MEDIA_URL = None
     MEDIA_ROOT = None

@@ -22,4 +22,5 @@ media/
 .vscode/
 .idea/
 # Collected static files
+production_data.json
 staticfiles/
