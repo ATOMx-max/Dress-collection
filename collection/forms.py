@@ -99,19 +99,10 @@ class DressForm(forms.ModelForm):
         if not photo:
             return photo
 
-        # Optimize only the newly uploaded image.
+        # Optimize the newly uploaded image.
+        # optimize_image() returns a JPEG.
         optimized_photo = optimize_image(
             photo
-        )
-
-        # optimize_image() creates a JPEG,
-        # so the filename should also use .jpg.
-        from pathlib import Path
-
-        original_name = Path(photo.name).stem
-
-        optimized_photo.name = (
-            f"{original_name}.jpg"
         )
 
         return optimized_photo

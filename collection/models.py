@@ -1,6 +1,33 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import os
+import uuid
+
+
+# =========================================================
+# IMAGE UPLOAD PATH
+# =========================================================
+
+def dress_image_upload_path(instance, filename):
+    """
+    Store each user's dress images in their own folder
+    and generate a unique filename.
+    """
+
+    # Get the username
+    username = instance.user.username
+
+    # Get the original file extension
+    extension = os.path.splitext(filename)[1].lower()
+
+    # Generate a unique filename
+    unique_filename = f"{uuid.uuid4().hex}{extension}"
+
+    # Example:
+    # dresses/souvik/8f3a91c2....jpg
+    return f"dresses/{username}/{unique_filename}"
+
 
 # =========================================================
 # CATEGORY
@@ -50,7 +77,7 @@ class Dress(models.Model):
     )
 
     photo = models.ImageField(
-        upload_to='dresses/'
+        upload_to=dress_image_upload_path
     )
 
     description = models.TextField(
