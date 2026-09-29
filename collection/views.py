@@ -4,10 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.models import User
 from django.contrib import messages
-
+from django.core.paginator import Paginator
 from .models import Category, Dress, Favorite
 from .forms import DressForm
-
+from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Q
 import logging
 
 logger = logging.getLogger(__name__)
@@ -55,17 +56,92 @@ def home(request):
         Dress.objects
         .filter(user=request.user)
         .select_related('category')
-        .order_by('-created_at')
     )
 
-    # Only current user's categories
+    # ==============================
+    # SEARCH
+    # ==============================
+    search_query = request.GET.get('search', '').strip()
+
+    if search_query:
+        dresses = dresses.filter(
+            Q(name__icontains=search_query) |
+            Q(category__name__icontains=search_query) |
+            Q(color__icontains=search_query) |
+            Q(size__icontains=search_query)
+        )
+
+    # ==============================
+    # CATEGORY FILTER
+    # ==============================
+    category_filter = request.GET.get('category', '').strip().lower()
+
+    if category_filter and category_filter != 'all':
+        dresses = dresses.filter(
+            category__name__iexact=category_filter
+        )
+
+    # ==============================
+    # COLOR FILTER
+    # ==============================
+    color_filter = request.GET.get('color', '').strip().lower()
+
+    if color_filter and color_filter != 'all':
+        dresses = dresses.filter(
+            color__iexact=color_filter
+        )
+
+    # ==============================
+    # SIZE FILTER
+    # ==============================
+    size_filter = request.GET.get('size', '').strip().lower()
+
+    if size_filter and size_filter != 'all':
+        dresses = dresses.filter(
+            size__iexact=size_filter
+        )
+
+    # ==============================
+    # SORTING
+    # ==============================
+    sort_filter = request.GET.get('sort', 'default').strip()
+
+    if sort_filter == 'name-asc':
+        dresses = dresses.order_by('name')
+
+    elif sort_filter == 'name-desc':
+        dresses = dresses.order_by('-name')
+
+    elif sort_filter == 'newest':
+        dresses = dresses.order_by('-created_at')
+
+    elif sort_filter == 'oldest':
+        dresses = dresses.order_by('created_at')
+
+    else:
+        # Same default ordering as before
+        dresses = dresses.order_by('-created_at')
+
+    # ==============================
+    # PAGINATION
+    # ==============================
+    paginator = Paginator(dresses, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # ==============================
+    # CURRENT USER'S CATEGORIES
+    # ==============================
     categories = (
         Category.objects
         .filter(user=request.user)
         .order_by('name')
     )
 
-    # Colors used by current user
+    # ==============================
+    # COLORS USED BY CURRENT USER
+    # ==============================
     colors = (
         Dress.objects
         .filter(user=request.user)
@@ -74,7 +150,9 @@ def home(request):
         .order_by('color')
     )
 
-    # Sizes used by current user
+    # ==============================
+    # SIZES USED BY CURRENT USER
+    # ==============================
     sizes = (
         Dress.objects
         .filter(user=request.user)
@@ -83,7 +161,9 @@ def home(request):
         .order_by('size')
     )
 
-    # Current user's favorite dresses
+    # ==============================
+    # CURRENT USER'S FAVORITES
+    # ==============================
     favorite_ids = set(
         Favorite.objects
         .filter(
@@ -97,15 +177,23 @@ def home(request):
         request,
         'collection/home.html',
         {
-            'dresses': dresses,
+            'dresses': page_obj,
+            'page_obj': page_obj,
+
             'categories': categories,
             'colors': colors,
             'sizes': sizes,
+
             'favorite_ids': favorite_ids,
+
+            # Keep filter values
+            'search_query': search_query,
+            'category_filter': category_filter,
+            'color_filter': color_filter,
+            'size_filter': size_filter,
+            'sort_filter': sort_filter,
         }
     )
-
-
 # =========================================================
 # DRESS DETAIL
 # =========================================================
@@ -135,13 +223,13 @@ def dress_detail(request, dress_id):
 @login_required(login_url='login')
 def admin_dashboard(request):
 
-    dresses = Dress.objects.filter(
+    total_dresses = Dress.objects.filter(
         user=request.user
-    )
+    ).count()
 
-    categories = Category.objects.filter(
+    total_categories = Category.objects.filter(
         user=request.user
-    )
+    ).count()
 
     recent_dresses = (
         Dress.objects
@@ -154,12 +242,11 @@ def admin_dashboard(request):
         request,
         'admin/dashboard.html',
         {
-            'total_dresses': dresses.count(),
-            'total_categories': categories.count(),
+            'total_dresses': total_dresses,
+            'total_categories': total_categories,
             'recent_dresses': recent_dresses,
         }
     )
-
 
 # =========================================================
 # DRESS LIST
@@ -175,14 +262,19 @@ def dashboard_dresses(request):
         .order_by('-created_at')
     )
 
+    paginator = Paginator(dresses, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(
         request,
         'admin/dresses.html',
         {
-            'dresses': dresses,
+            'dresses': page_obj,
+            'page_obj': page_obj,
         }
     )
-
 
 # =========================================================
 # ADD DRESS

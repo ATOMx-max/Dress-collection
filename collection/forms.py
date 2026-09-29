@@ -19,7 +19,6 @@ class DressForm(forms.ModelForm):
         ]
 
         widgets = {
-
             'name': forms.TextInput(
                 attrs={
                     'placeholder': 'Enter dress name',
@@ -52,7 +51,6 @@ class DressForm(forms.ModelForm):
         user=None,
         **kwargs
     ):
-
         super().__init__(
             *args,
             **kwargs
@@ -97,7 +95,7 @@ class DressForm(forms.ModelForm):
         photo = self.cleaned_data.get('photo')
 
         # No new image was uploaded.
-        # This is important when editing a dress.
+        # Important when editing a dress.
         if not photo:
             return photo
 
@@ -106,7 +104,14 @@ class DressForm(forms.ModelForm):
             photo
         )
 
-        # Keep the original filename.
-        optimized_photo.name = photo.name
+        # optimize_image() creates a JPEG,
+        # so the filename should also use .jpg.
+        from pathlib import Path
+
+        original_name = Path(photo.name).stem
+
+        optimized_photo.name = (
+            f"{original_name}.jpg"
+        )
 
         return optimized_photo

@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageOps
 from io import BytesIO
 from django.core.files.base import ContentFile
 
@@ -9,15 +9,16 @@ def optimize_image(image_file, max_width=1600, quality=82):
 
     - Maximum width: 1600px
     - Keeps aspect ratio
-    - Converts PNG/RGBA images to RGB
+    - Fixes phone-camera orientation
+    - Converts images to RGB
     - Saves as JPEG
     """
 
+    # Open uploaded image
     image = Image.open(image_file)
 
     # Fix orientation from phone cameras
     try:
-        from PIL import ImageOps
         image = ImageOps.exif_transpose(image)
     except Exception:
         pass
@@ -35,9 +36,11 @@ def optimize_image(image_file, max_width=1600, quality=82):
 
         background.paste(
             image,
-            mask=image.getchannel("A")
-            if image.mode == "RGBA"
-            else None
+            mask=(
+                image.getchannel("A")
+                if image.mode == "RGBA"
+                else None
+            )
         )
 
         image = background

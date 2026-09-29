@@ -1095,6 +1095,64 @@
 
 
         /* =====================================================
+           PAGINATION
+        ===================================================== */
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 45px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a,
+        .pagination span {
+            min-width: 40px;
+            height: 40px;
+            padding: 0 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #222;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .pagination a:hover {
+            background: #111;
+            border-color: #111;
+            color: #fff;
+        }
+
+        .pagination .active {
+            background: #111;
+            border-color: #111;
+            color: #fff;
+        }
+
+        .pagination .disabled {
+            color: #aaa;
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+            color: #777;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
            FOOTER
         ===================================================== */
 
@@ -1573,6 +1631,19 @@
                 padding: 55px 16px;
             }
 
+            .pagination {
+                margin-top: 30px;
+                gap: 6px;
+            }
+
+            .pagination a,
+            .pagination span {
+                min-width: 36px;
+                height: 36px;
+                padding: 0 9px;
+                font-size: 12px;
+            }
+
             footer {
                 padding: 28px 16px;
             }
@@ -1861,7 +1932,7 @@
                     type="text"
                     id="searchInput"
                     placeholder="Search dresses..."
-                    onkeyup="applyAllFilters()"
+                    value="{{ search_query }}"
                 >
 
 
@@ -1977,30 +2048,25 @@
                     onchange="applyAllFilters()"
                 >
 
-                    <option value="default">
+                    <option value="default" {% if sort_filter == "default" %}selected{% endif %}>
                         Default
                     </option>
 
-
-                    <option value="name-asc">
+                    <option value="name-asc" {% if sort_filter == "name-asc" %}selected{% endif %}>
                         Name: A → Z
                     </option>
 
-
-                    <option value="name-desc">
+                    <option value="name-desc" {% if sort_filter == "name-desc" %}selected{% endif %}>
                         Name: Z → A
                     </option>
 
-
-                    <option value="newest">
+                    <option value="newest" {% if sort_filter == "newest" %}selected{% endif %}>
                         Newest First
                     </option>
 
-
-                    <option value="oldest">
+                    <option value="oldest" {% if sort_filter == "oldest" %}selected{% endif %}>
                         Oldest First
                     </option>
-
                 </select>
 
             </div>
@@ -2021,7 +2087,7 @@
                     onchange="applyAllFilters()"
                 >
 
-                    <option value="all">
+                    <option value="all" {% if not category_filter or category_filter == "all" %}selected{% endif %}>
                         All Categories
                     </option>
 
@@ -2030,6 +2096,7 @@
 
                         <option
                             value="{{ category.name|lower }}"
+                            {% if category_filter == category.name|lower %}selected{% endif %}
                         >
                             {{ category.name }}
                         </option>
@@ -2056,7 +2123,7 @@
                     onchange="applyAllFilters()"
                 >
 
-                    <option value="all">
+                    <option value="all" {% if not color_filter or color_filter == "all" %}selected{% endif %}>
                         All Colors
                     </option>
 
@@ -2065,6 +2132,7 @@
 
                         <option
                             value="{{ color|lower }}"
+                            {% if color_filter == color|lower %}selected{% endif %}
                         >
                             {{ color }}
                         </option>
@@ -2091,7 +2159,7 @@
                     onchange="applyAllFilters()"
                 >
 
-                    <option value="all">
+                    <option value="all" {% if not size_filter or size_filter == "all" %}selected{% endif %}>
                         All Sizes
                     </option>
 
@@ -2100,6 +2168,7 @@
 
                         <option
                             value="{{ size|lower }}"
+                            {% if size_filter == size|lower %}selected{% endif %}
                         >
                             {{ size }}
                         </option>
@@ -2277,6 +2346,36 @@
 
         </div>
 
+
+            {% if page_obj.has_other_pages %}
+                <div class="pagination" aria-label="Collection pagination">
+
+                    {% if page_obj.has_previous %}
+                        <a href="?{% if search_query %}search={{ search_query|urlencode }}&{% endif %}{% if category_filter and category_filter != 'all' %}category={{ category_filter|urlencode }}&{% endif %}{% if color_filter and color_filter != 'all' %}color={{ color_filter|urlencode }}&{% endif %}{% if size_filter and size_filter != 'all' %}size={{ size_filter|urlencode }}&{% endif %}{% if sort_filter and sort_filter != 'default' %}sort={{ sort_filter|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}#collection" aria-label="Previous page">←</a>
+                    {% else %}
+                        <span class="disabled" aria-hidden="true">←</span>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <span class="active" aria-current="page">{{ num }}</span>
+                        {% else %}
+                            <a href="?{% if search_query %}search={{ search_query|urlencode }}&{% endif %}{% if category_filter and category_filter != 'all' %}category={{ category_filter|urlencode }}&{% endif %}{% if color_filter and color_filter != 'all' %}color={{ color_filter|urlencode }}&{% endif %}{% if size_filter and size_filter != 'all' %}size={{ size_filter|urlencode }}&{% endif %}{% if sort_filter and sort_filter != 'default' %}sort={{ sort_filter|urlencode }}&{% endif %}page={{ num }}#collection">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?{% if search_query %}search={{ search_query|urlencode }}&{% endif %}{% if category_filter and category_filter != 'all' %}category={{ category_filter|urlencode }}&{% endif %}{% if color_filter and color_filter != 'all' %}color={{ color_filter|urlencode }}&{% endif %}{% if size_filter and size_filter != 'all' %}size={{ size_filter|urlencode }}&{% endif %}{% if sort_filter and sort_filter != 'default' %}sort={{ sort_filter|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}#collection" aria-label="Next page">→</a>
+                    {% else %}
+                        <span class="disabled" aria-hidden="true">→</span>
+                    {% endif %}
+
+                    <div class="pagination-info">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </div>
+
+                </div>
+            {% endif %}
     </section>
 
 
@@ -2467,268 +2566,43 @@
 
 
         /* =====================================================
-        SEARCH + FILTERS + SORTING
+           SEARCH + FILTERS + SORTING
+           Server-side filtering + pagination
         ===================================================== */
 
         function applyAllFilters() {
 
+            const search = document.getElementById("searchInput").value.trim();
+            const category = document.getElementById("categoryFilter").value;
+            const color = document.getElementById("colorFilter").value;
+            const size = document.getElementById("sizeFilter").value;
+            const sort = document.getElementById("sortFilter").value;
 
-            const searchInput =
-                document
-                .getElementById("searchInput")
-                .value
-                .toLowerCase()
-                .trim();
+            const params = new URLSearchParams();
 
+            if (search) params.set("search", search);
+            if (category && category !== "all") params.set("category", category);
+            if (color && color !== "all") params.set("color", color);
+            if (size && size !== "all") params.set("size", size);
+            if (sort && sort !== "default") params.set("sort", sort);
 
-            const category =
-                document
-                .getElementById("categoryFilter")
-                .value;
+            const query = params.toString();
+            window.location.href = (query ? "?" + query : "") + "#collection";
+        }
 
 
-            const color =
-                document
-                .getElementById("colorFilter")
-                .value;
+        /* =====================================================
+           SEARCH WITH ENTER KEY
+        ===================================================== */
 
+        document.getElementById("searchInput").addEventListener("keydown", function(event) {
 
-            const size =
-                document
-                .getElementById("sizeFilter")
-                .value;
-
-
-            const sort =
-                document
-                .getElementById("sortFilter")
-                .value;
-
-
-            const grid =
-                document.getElementById("dressGrid");
-
-
-            const cards =
-                Array.from(
-                    document.querySelectorAll(".dress-link")
-                );
-
-
-            let visibleCards = [];
-
-
-
-            /* =================================================
-               FILTER
-            ================================================= */
-
-            cards.forEach(function(card) {
-
-
-                const dressCard =
-                    card.querySelector(".dress-card");
-
-
-                const dressName =
-                    card
-                    .querySelector("h3")
-                    .innerText
-                    .toLowerCase();
-
-
-                const dressCategory =
-                    dressCard.dataset.category;
-
-
-                const dressColor =
-                    dressCard.dataset.color;
-
-
-                const dressSize =
-                    dressCard.dataset.size;
-
-
-
-                const categoryMatch =
-                    category === "all" ||
-                    dressCategory === category;
-
-
-                const colorMatch =
-                    color === "all" ||
-                    dressColor === color;
-
-
-                const sizeMatch =
-                    size === "all" ||
-                    dressSize === size;
-
-
-                const searchMatch =
-                    searchInput === "" ||
-
-                    dressName.includes(
-                        searchInput
-                    ) ||
-
-                    dressCategory.includes(
-                        searchInput
-                    ) ||
-
-                    dressColor.includes(
-                        searchInput
-                    ) ||
-
-                    dressSize.includes(
-                        searchInput
-                    );
-
-
-
-                if (
-                    categoryMatch &&
-                    colorMatch &&
-                    sizeMatch &&
-                    searchMatch
-                ) {
-
-                    card.style.display = "";
-
-                    visibleCards.push(card);
-
-                } else {
-
-                    card.style.display = "none";
-                }
-
-            });
-
-
-
-            /* =================================================
-               SORT
-            ================================================= */
-
-            visibleCards.sort(function(a, b) {
-
-
-                const cardA =
-                    a.querySelector(".dress-card");
-
-
-                const cardB =
-                    b.querySelector(".dress-card");
-
-
-
-                if (
-                    sort === "name-asc" ||
-                    sort === "name-desc"
-                ) {
-
-                    const nameA =
-                        a.querySelector("h3")
-                        .innerText
-                        .trim()
-                        .toLowerCase();
-
-
-                    const nameB =
-                        b.querySelector("h3")
-                        .innerText
-                        .trim()
-                        .toLowerCase();
-
-
-                    if (sort === "name-asc") {
-
-                        return nameA.localeCompare(
-                            nameB
-                        );
-                    }
-
-
-                    return nameB.localeCompare(
-                        nameA
-                    );
-                }
-
-
-
-                const dateA =
-                    parseInt(
-                        cardA.dataset.created ||
-                        cardA.dataset.id
-                    );
-
-
-                const dateB =
-                    parseInt(
-                        cardB.dataset.created ||
-                        cardB.dataset.id
-                    );
-
-
-
-                if (sort === "newest") {
-
-                    return dateB - dateA;
-                }
-
-
-                if (sort === "oldest") {
-
-                    return dateA - dateB;
-                }
-
-
-                /* DEFAULT */
-
-                const idA =
-                    parseInt(cardA.dataset.id);
-
-
-                const idB =
-                    parseInt(cardB.dataset.id);
-
-
-                return idA - idB;
-
-            });
-
-
-
-            /* =================================================
-               REORDER
-            ================================================= */
-
-            visibleCards.forEach(function(card) {
-
-                grid.appendChild(card);
-
-            });
-
-
-
-            /* =================================================
-               NO RESULTS
-            ================================================= */
-
-            const noResults =
-                document.getElementById("noResults");
-
-
-            if (visibleCards.length === 0 && cards.length > 0) {
-
-                noResults.style.display = "block";
-
-            } else {
-
-                noResults.style.display = "none";
+            if (event.key === "Enter") {
+                event.preventDefault();
+                applyAllFilters();
             }
 
-        }
+        });
 
 
 
@@ -2737,35 +2611,7 @@
         ===================================================== */
 
         function resetFilters() {
-
-
-            document
-                .getElementById("searchInput")
-                .value = "";
-
-
-            document
-                .getElementById("categoryFilter")
-                .value = "all";
-
-
-            document
-                .getElementById("colorFilter")
-                .value = "all";
-
-
-            document
-                .getElementById("sizeFilter")
-                .value = "all";
-
-
-            document
-                .getElementById("sortFilter")
-                .value = "default";
-
-
-            applyAllFilters();
-
+            window.location.href = "#collection";
         }
 
 
