@@ -1069,138 +1069,199 @@
 
 
     <!-- =========================
-         IMAGE PREVIEW
+        IMAGE PREVIEW
     ========================= -->
 
     <script>
+        const photoInput = document.getElementById(
+            "{{ form.photo.id_for_label }}"
+        );
 
-        const photoInput =
-            document.getElementById(
-                "{{ form.photo.id_for_label }}"
-            );
+        const previewContainer = document.getElementById(
+            "previewContainer"
+        );
 
+        const previewImage = document.getElementById(
+            "previewImage"
+        );
 
-        const previewContainer =
-            document.getElementById(
-                "previewContainer"
-            );
-
-
-        const previewImage =
-            document.getElementById(
-                "previewImage"
-            );
-
-
-        const previewName =
-            document.getElementById(
-                "previewName"
-            );
-
+        const previewName = document.getElementById(
+            "previewName"
+        );
 
         const dressForm = document.getElementById("dressForm");
 
-        dressForm.addEventListener("submit", function () {
+
+        /* ==========================================
+        PREVENT DOUBLE SUBMISSION
+        ========================================== */
+
+        dressForm.addEventListener("submit", async function (event) {
+
             const submitButton = this.querySelector(".btn-save");
 
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.textContent = "Adding Dress...";
-                submitButton.style.opacity = "0.7";
-                submitButton.style.cursor = "wait";
+            if (!photoInput.files.length) {
+                return;
+            }
+
+            const originalFile = photoInput.files[0];
+
+            try {
+
+                /*
+                * Create a stable copy of the Android-selected file.
+                * This avoids ERR_UPLOAD_FILE_CHANGED on some
+                * Android browsers / gallery providers.
+                */
+
+                const buffer = await originalFile.arrayBuffer();
+
+                const stableFile = new File(
+                    [buffer],
+                    originalFile.name,
+                    {
+                        type: originalFile.type,
+                        lastModified: Date.now()
+                    }
+                );
+
+                /*
+                * Replace the original mobile file with
+                * our stable copy.
+                */
+
+                const dataTransfer = new DataTransfer();
+
+                dataTransfer.items.add(stableFile);
+
+                photoInput.files = dataTransfer.files;
+
+
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.textContent = "Adding Dress...";
+                    submitButton.style.opacity = "0.7";
+                    submitButton.style.cursor = "wait";
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "File preparation failed:",
+                    error
+                );
+
+                event.preventDefault();
+
+                alert(
+                    "The selected image could not be prepared. " +
+                    "Please select the photo again."
+                );
+
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = "+ Add Dress";
+                    submitButton.style.opacity = "1";
+                    submitButton.style.cursor = "pointer";
+                }
             }
         });
 
-        photoInput.addEventListener(
-            "change",
-            function () {
 
-                const file = this.files[0];
+        /* ==========================================
+        PHOTO PREVIEW
+        ========================================== */
 
+        photoInput.addEventListener("change", function () {
 
-                if (!file) {
+            const file = this.files[0];
 
-                    previewContainer.classList.remove(
-                        "active"
-                    );
+            if (!file) {
 
-                    return;
-                }
+                previewContainer.classList.remove("active");
 
+                previewImage.src = "";
 
-                const allowedTypes = [
-                    "image/jpeg",
-                    "image/png",
-                    "image/webp"
-                ];
+                previewName.textContent = "";
 
-
-                if (
-                    !allowedTypes.includes(
-                        file.type
-                    )
-                ) {
-
-                    alert(
-                        "Please select a JPG, PNG or WEBP image."
-                    );
-
-                    this.value = "";
-
-                    previewContainer.classList.remove(
-                        "active"
-                    );
-
-                    return;
-                }
-
-
-                const maxSize =
-                    5 * 1024 * 1024;
-
-
-                if (file.size > maxSize) {
-
-                    alert(
-                        "Image size must be less than 5 MB."
-                    );
-
-                    this.value = "";
-
-                    previewContainer.classList.remove(
-                        "active"
-                    );
-
-                    return;
-                }
-
-
-                const reader =
-                    new FileReader();
-
-
-                reader.onload = function (event) {
-
-                    previewImage.src =
-                        event.target.result;
-
-                    previewName.textContent =
-                        file.name;
-
-                    previewContainer.classList.add(
-                        "active"
-                    );
-                };
-
-
-                reader.readAsDataURL(file);
-
+                return;
             }
-        );
 
+
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ];
+
+
+            if (!allowedTypes.includes(file.type)) {
+
+                alert(
+                    "Please select a JPG, PNG or WEBP image."
+                );
+
+                this.value = "";
+
+                previewContainer.classList.remove("active");
+
+                return;
+            }
+
+
+            const maxSize = 5 * 1024 * 1024;
+
+
+            if (file.size > maxSize) {
+
+                alert(
+                    "Image size must be less than 5 MB."
+                );
+
+                this.value = "";
+
+                previewContainer.classList.remove("active");
+
+                return;
+            }
+
+
+            const reader = new FileReader();
+
+
+            reader.onload = function (event) {
+
+                previewImage.src =
+                    event.target.result;
+
+                previewName.textContent =
+                    file.name;
+
+                previewContainer.classList.add(
+                    "active"
+                );
+            };
+
+
+            reader.onerror = function () {
+
+                alert(
+                    "Unable to read this image. " +
+                    "Please select it again."
+                );
+
+                photoInput.value = "";
+
+                previewContainer.classList.remove(
+                    "active"
+                );
+            };
+
+
+            reader.readAsDataURL(file);
+
+        });
     </script>
-
-
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Dress, Category
-from .image_utils import optimize_image
+
 
 
 class DressForm(forms.ModelForm):
@@ -41,6 +41,11 @@ class DressForm(forms.ModelForm):
             'size': forms.TextInput(
                 attrs={
                     'placeholder': 'Enter size',
+                }
+            ),
+            'photo': forms.ClearableFileInput(
+                attrs={
+                    'accept': 'image/jpeg,image/png,image/webp',
                 }
             ),
         }
@@ -89,20 +94,3 @@ class DressForm(forms.ModelForm):
                 )
 
         return category
-
-    def clean_photo(self):
-
-        photo = self.cleaned_data.get('photo')
-
-        # No new image was uploaded.
-        # Important when editing a dress.
-        if not photo:
-            return photo
-
-        # Optimize the newly uploaded image.
-        # optimize_image() returns a JPEG.
-        optimized_photo = optimize_image(
-            photo
-        )
-
-        return optimized_photo

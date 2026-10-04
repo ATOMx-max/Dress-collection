@@ -1268,41 +1268,128 @@
 
 
     <!-- =========================
-         PHOTO PREVIEW SCRIPT
+        PHOTO PREVIEW SCRIPT
     ========================= -->
 
-    <script>
+        <script>
 
-        const photoInput =
-            document.getElementById(
-                "{{ form.photo.id_for_label }}"
-            );
+        const photoInput = document.getElementById(
+            "{{ form.photo.id_for_label }}"
+        );
 
-        const preview =
-            document.getElementById(
-                "photoPreview"
-            );
+        const preview = document.getElementById(
+            "photoPreview"
+        );
 
-        const previewImage =
-            document.getElementById(
-                "previewImage"
-            );
-
+        const previewImage = document.getElementById(
+            "previewImage"
+        );
 
         const editForm = document.querySelector("form");
 
-        if (editForm) {
-            editForm.addEventListener("submit", function () {
-                const submitButton = this.querySelector(".btn-save");
 
-                if (submitButton) {
-                    submitButton.disabled = true;
-                    submitButton.textContent = "Updating Dress...";
-                    submitButton.style.opacity = "0.7";
-                    submitButton.style.cursor = "wait";
+        /* ==========================================
+        PREVENT DOUBLE SUBMISSION
+        ========================================== */
+
+        if (editForm) {
+
+            editForm.addEventListener(
+                "submit",
+                async function (event) {
+
+                    if (
+                        photoInput &&
+                        photoInput.files.length
+                    ) {
+
+                        const originalFile =
+                            photoInput.files[0];
+
+                        try {
+
+                            /*
+                            * Create a stable copy of the
+                            * Android-selected image.
+                            */
+
+                            const buffer =
+                                await originalFile.arrayBuffer();
+
+                            const stableFile =
+                                new File(
+                                    [buffer],
+                                    originalFile.name,
+                                    {
+                                        type:
+                                            originalFile.type,
+
+                                        lastModified:
+                                            Date.now()
+                                    }
+                                );
+
+
+                            /*
+                            * Replace the original file.
+                            */
+
+                            const dataTransfer =
+                                new DataTransfer();
+
+                            dataTransfer.items.add(
+                                stableFile
+                            );
+
+                            photoInput.files =
+                                dataTransfer.files;
+
+
+                        } catch (error) {
+
+                            console.error(
+                                "File preparation failed:",
+                                error
+                            );
+
+                            event.preventDefault();
+
+                            alert(
+                                "The selected image could not " +
+                                "be prepared. Please select " +
+                                "the photo again."
+                            );
+
+                            return;
+                        }
+                    }
+
+
+                    const submitButton =
+                        this.querySelector(".btn-save");
+
+                    if (submitButton) {
+
+                        submitButton.disabled = true;
+
+                        submitButton.textContent =
+                            "Updating Dress...";
+
+                        submitButton.style.opacity =
+                            "0.7";
+
+                        submitButton.style.cursor =
+                            "wait";
+                    }
+
                 }
-            });
+            );
         }
+
+
+        /* ==========================================
+        PHOTO PREVIEW
+        ========================================== */
 
         if (photoInput) {
 
@@ -1314,86 +1401,98 @@
                         this.files[0];
 
 
-                    if (file) {
-
-                        /* Check image type */
-
-                        if (!file.type.startsWith("image/")) {
-
-                            alert(
-                                "Please select a valid image file."
-                            );
-
-                            this.value = "";
-
-                            preview.style.display =
-                                "none";
-
-                            previewImage.src = "";
-
-                            return;
-                        }
-
-
-                        /* File size check */
-
-                        const maxSize =
-                            5 * 1024 * 1024;
-
-
-                        if (file.size > maxSize) {
-
-                            alert(
-                                "Image size must be less than 5 MB."
-                            );
-
-                            this.value = "";
-
-                            preview.style.display =
-                                "none";
-
-                            previewImage.src = "";
-
-                            return;
-                        }
-
-
-                        /* Preview */
-
-                        const reader =
-                            new FileReader();
-
-
-                        reader.onload =
-                            function (event) {
-
-                                previewImage.src =
-                                    event.target.result;
-
-                                preview.style.display =
-                                    "block";
-
-                            };
-
-
-                        reader.readAsDataURL(file);
-
-                    } else {
+                    if (!file) {
 
                         preview.style.display =
                             "none";
 
                         previewImage.src = "";
 
+                        return;
                     }
+
+
+                    if (
+                        !file.type.startsWith(
+                            "image/"
+                        )
+                    ) {
+
+                        alert(
+                            "Please select a valid image file."
+                        );
+
+                        this.value = "";
+
+                        preview.style.display =
+                            "none";
+
+                        previewImage.src = "";
+
+                        return;
+                    }
+
+
+                    const maxSize =
+                        5 * 1024 * 1024;
+
+
+                    if (file.size > maxSize) {
+
+                        alert(
+                            "Image size must be less than 5 MB."
+                        );
+
+                        this.value = "";
+
+                        preview.style.display =
+                            "none";
+
+                        previewImage.src = "";
+
+                        return;
+                    }
+
+
+                    const reader =
+                        new FileReader();
+
+
+                    reader.onload =
+                        function (event) {
+
+                            previewImage.src =
+                                event.target.result;
+
+                            preview.style.display =
+                                "block";
+                        };
+
+
+                    reader.onerror =
+                        function () {
+
+                            alert(
+                                "Unable to read this image. " +
+                                "Please select it again."
+                            );
+
+                            photoInput.value = "";
+
+                            preview.style.display =
+                                "none";
+
+                            previewImage.src = "";
+                        };
+
+
+                    reader.readAsDataURL(file);
 
                 }
             );
-
         }
 
     </script>
-
 
 </body>
 

@@ -150,7 +150,17 @@
 
             transform: translateY(-1px);
         }
+        .logout-btn {
+            color: #d32f2f !important;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.25s ease;
+        }
 
+        .logout-btn:hover {
+            color: #a00000 !important;
+        }
 
         /* =====================================================
            MOBILE MENU BUTTON
@@ -1778,11 +1788,23 @@
             </a>
 
 
-            <a
-                href="{% url 'admin_dashboard' %}"
-                class="admin-btn"
-            >
-                Dashboard
+            
+            <a href="{% url 'add_dress' %}"
+            onclick="closeMenu()">
+                ➕ Add Dress
+            </a>
+
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn" onclick="closeMenu()">
+                    🚪 Logout
+                </button>
+            </form>
+
+            <a href="{% url 'admin_dashboard' %}"
+            class="mobile-admin"
+            onclick="closeMenu()">
+                ⚙️ Dashboard
             </a>
 
         </div>
@@ -1855,7 +1877,20 @@
         >
             ❤️ My Favorites
         </a>
+        <a
+            href="{% url 'add_dress' %}"
+            onclick="closeMenu()"
+        >
+            ➕ Add Dress
+        </a>
 
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn" onclick="closeMenu()">
+
+                🚪 Logout
+            </button>
+        </form>
 
         <a
             href="{% url 'admin_dashboard' %}"
@@ -1864,13 +1899,14 @@
         >
             ⚙️ Dashboard
         </a>
+        
 
     </div>
 
 
 
     <!-- =====================================================
-         HERO SLIDESHOW
+        HERO SLIDESHOW
     ===================================================== -->
 
     <section
