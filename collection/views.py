@@ -430,6 +430,9 @@ def delete_dress(request, dress_id):
 
     if request.method == 'POST':
 
+        if dress.photo:
+            dress.photo.delete(save=False)
+
         dress.delete()
 
         return redirect(
