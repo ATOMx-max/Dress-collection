@@ -45,7 +45,7 @@ class DressForm(forms.ModelForm):
             ),
             'photo': forms.ClearableFileInput(
                 attrs={
-                    'accept': 'image/jpeg,image/png,image/webp',
+                    'accept': 'image/jpeg,image/png,image/webp,image/heic,image/heif',
                 }
             ),
         }

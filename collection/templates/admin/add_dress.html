@@ -1132,14 +1132,30 @@
             const allowedTypes = [
                 "image/jpeg",
                 "image/png",
-                "image/webp"
+                "image/webp",
+                "image/heic",
+                "image/heif"
             ];
 
+            const fileName = file.name.toLowerCase();
 
-            if (!allowedTypes.includes(file.type)) {
+            const allowedExtensions = [
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".webp",
+                ".heic",
+                ".heif"
+            ];
+
+            const validType =
+                allowedTypes.includes(file.type) ||
+                allowedExtensions.some(ext => fileName.endsWith(ext));
+
+            if (!validType) {
 
                 alert(
-                    "Please select a JPG, PNG or WEBP image."
+                    "Please select a JPG, PNG, WEBP, HEIC or HEIF image."
                 );
 
                 this.value = "";

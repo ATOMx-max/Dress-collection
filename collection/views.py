@@ -5,11 +5,14 @@ from django.contrib.auth.views import LogoutView
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.paginator import Paginator
+
 from .models import Category, Dress, Favorite
 from .forms import DressForm
-from django.shortcuts import render, get_object_or_404, redirect
+from .image_utils import optimize_image
+
 from django.db.models import Q
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +64,7 @@ def home(request):
     # ==============================
     # SEARCH
     # ==============================
+
     search_query = request.GET.get('search', '').strip()
 
     if search_query:
@@ -74,6 +78,7 @@ def home(request):
     # ==============================
     # CATEGORY FILTER
     # ==============================
+
     category_filter = request.GET.get('category', '').strip().lower()
 
     if category_filter and category_filter != 'all':
@@ -84,6 +89,7 @@ def home(request):
     # ==============================
     # COLOR FILTER
     # ==============================
+
     color_filter = request.GET.get('color', '').strip().lower()
 
     if color_filter and color_filter != 'all':
@@ -94,6 +100,7 @@ def home(request):
     # ==============================
     # SIZE FILTER
     # ==============================
+
     size_filter = request.GET.get('size', '').strip().lower()
 
     if size_filter and size_filter != 'all':
@@ -104,6 +111,7 @@ def home(request):
     # ==============================
     # SORTING
     # ==============================
+
     sort_filter = request.GET.get('sort', 'default').strip()
 
     if sort_filter == 'name-asc':
@@ -125,6 +133,7 @@ def home(request):
     # ==============================
     # PAGINATION
     # ==============================
+
     paginator = Paginator(dresses, 12)
 
     page_number = request.GET.get('page')
@@ -133,6 +142,7 @@ def home(request):
     # ==============================
     # CURRENT USER'S CATEGORIES
     # ==============================
+
     categories = (
         Category.objects
         .filter(user=request.user)
@@ -142,6 +152,7 @@ def home(request):
     # ==============================
     # COLORS USED BY CURRENT USER
     # ==============================
+
     colors = (
         Dress.objects
         .filter(user=request.user)
@@ -153,6 +164,7 @@ def home(request):
     # ==============================
     # SIZES USED BY CURRENT USER
     # ==============================
+
     sizes = (
         Dress.objects
         .filter(user=request.user)
@@ -164,6 +176,7 @@ def home(request):
     # ==============================
     # CURRENT USER'S FAVORITES
     # ==============================
+
     favorite_ids = set(
         Favorite.objects
         .filter(
@@ -194,6 +207,8 @@ def home(request):
             'sort_filter': sort_filter,
         }
     )
+
+
 # =========================================================
 # DRESS DETAIL
 # =========================================================
@@ -248,6 +263,7 @@ def admin_dashboard(request):
         }
     )
 
+
 # =========================================================
 # DRESS LIST
 # =========================================================
@@ -276,6 +292,7 @@ def dashboard_dresses(request):
         }
     )
 
+
 # =========================================================
 # ADD DRESS
 # =========================================================
@@ -298,6 +315,29 @@ def add_dress(request):
                 dress = form.save(commit=False)
 
                 dress.user = request.user
+
+                # ==========================================
+                # OPTIMIZE + CONVERT IMAGE TO JPEG
+                # ==========================================
+
+                if 'photo' in request.FILES:
+
+                    optimized_image = optimize_image(
+                        request.FILES['photo']
+                    )
+
+                    original_name = request.FILES['photo'].name
+
+                    base_name = original_name.rsplit(
+                        '.',
+                        1
+                    )[0]
+
+                    dress.photo.save(
+                        f"{base_name}.jpg",
+                        optimized_image,
+                        save=False
+                    )
 
                 dress.save()
 
@@ -386,17 +426,86 @@ def edit_dress(request, dress_id):
 
         if form.is_valid():
 
-            dress = form.save(
-                commit=False
-            )
+            try:
 
-            dress.user = request.user
+                dress = form.save(
+                    commit=False
+                )
 
-            dress.save()
+                dress.user = request.user
 
-            return redirect(
-                'dashboard_dresses'
-            )
+                # ==========================================
+                # OPTIMIZE + CONVERT NEW IMAGE TO JPEG
+                # ==========================================
+
+                if 'photo' in request.FILES:
+
+                    optimized_image = optimize_image(
+                        request.FILES['photo']
+                    )
+
+                    original_name = request.FILES['photo'].name
+
+                    base_name = original_name.rsplit(
+                        '.',
+                        1
+                    )[0]
+
+                    dress.photo.save(
+                        f"{base_name}.jpg",
+                        optimized_image,
+                        save=False
+                    )
+
+                dress.save()
+
+                return redirect(
+                    'dashboard_dresses'
+                )
+
+            except Exception as e:
+
+                logger.exception("EDIT DRESS ERROR")
+
+                return HttpResponse(
+                    f"""
+                    <html>
+                    <head>
+                        <title>Edit Dress Error</title>
+                    </head>
+
+                    <body style="
+                        font-family: Arial, sans-serif;
+                        padding: 40px;
+                        background: #f8fafc;
+                    ">
+
+                        <h2 style="
+                            color: #dc2626;
+                        ">
+                            Edit Dress Error
+                        </h2>
+
+                        <pre style="
+                            background: #111827;
+                            color: #f9fafb;
+                            padding: 20px;
+                            border-radius: 10px;
+                            overflow: auto;
+                            white-space: pre-wrap;
+                        ">{e}</pre>
+
+                        <br>
+
+                        <a href="/dashboard/dresses/">
+                            ← Back to Dresses
+                        </a>
+
+                    </body>
+                    </html>
+                    """,
+                    status=500
+                )
 
     else:
 

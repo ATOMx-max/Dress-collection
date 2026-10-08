@@ -2,6 +2,7 @@ Django==6.1.1
 gunicorn
 whitenoise
 python-dotenv
+pillow-heif
 Pillow
 psycopg[binary]
 mysqlclient
