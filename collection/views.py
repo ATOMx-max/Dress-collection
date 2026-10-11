@@ -1,15 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.urls import reverse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.utils.text import slugify
+from django.utils import timezone
+from pathlib import Path
+import json
+from datetime import timedelta
 
-from .models import Category, Dress, Favorite
+from .models import Category, Dress, Favorite, DressShare
 from .forms import DressForm
 from .image_utils import optimize_image
 
+from django.db import transaction
 from django.db.models import Q
 import logging
 
@@ -400,6 +407,99 @@ def add_dress(request):
             'form': form
         }
     )
+
+
+# =========================================================
+# ADD MULTIPLE DRESSES
+# =========================================================
+
+@login_required(login_url='login')
+def add_multiple_dresses(request):
+    """Upload multiple images with a real browser-side progress bar.
+
+    The user assigns a category to each image before submitting. The browser
+    sends all selected files and category IDs in one XMLHttpRequest so upload
+    progress reflects bytes actually sent to the server.
+    """
+    categories = Category.objects.filter(user=request.user).order_by('name')
+
+    if request.method == 'POST':
+        files = request.FILES.getlist('photos')
+        max_files = 30
+        max_file_size = 12 * 1024 * 1024  # 12 MB per original image
+        allowed_extensions = {'.jpg', '.jpeg', '.png', '.webp', '.heic', '.heif'}
+
+        def fail(message, status=400):
+            return JsonResponse({'ok': False, 'error': message}, status=status)
+
+        if not files:
+            return fail('Please select at least one photo.')
+        if len(files) > max_files:
+            return fail(f'You can upload up to {max_files} photos at a time.')
+        if not categories.exists():
+            return fail('Create a category before uploading dresses.')
+
+        validated = []
+        for index, uploaded in enumerate(files):
+            extension = Path(uploaded.name).suffix.lower()
+            if extension not in allowed_extensions:
+                return fail(f'{uploaded.name}: unsupported file type.')
+            if uploaded.size > max_file_size:
+                return fail(f'{uploaded.name}: file is larger than 12 MB.')
+
+            category_id = request.POST.get(f'category_{index}', '').strip()
+            try:
+                category = categories.get(pk=int(category_id))
+            except (ValueError, TypeError, Category.DoesNotExist):
+                return fail(f'Please choose a valid category for {uploaded.name}.')
+
+            # A readable default name based on the filename; no extra fields
+            # are required in the bulk workflow.
+            original_stem = Path(uploaded.name).stem
+            name = original_stem.replace('_', ' ').replace('-', ' ').strip() or 'Untitled Dress'
+            # Optional color field for each photo; blank values use "Unknown".
+            color = request.POST.get(f'color_{index}', '').strip()
+            if len(color) > 50:
+                return fail(f'Color for {uploaded.name} must be 50 characters or fewer.')
+
+            validated.append((uploaded, category, name[:150], color or 'Unknown'))
+
+        created_count = 0
+        try:
+            with transaction.atomic():
+                for uploaded, category, name, color in validated:
+                    optimized_image = optimize_image(uploaded)
+                    dress = Dress(
+                        user=request.user,
+                        name=name,
+                        category=category,
+                        description='',
+                        color=color,
+                        size='One Size',
+                    )
+                    output_name = f'{slugify(name) or "dress"}.jpg'
+                    dress.photo.save(output_name, optimized_image, save=False)
+                    dress.save()
+                    created_count += 1
+        except Exception:
+            logger.exception('BULK ADD DRESSES ERROR')
+            return fail(
+                'Something went wrong while processing the photos. Please try again.',
+                status=500,
+            )
+
+        return JsonResponse({
+            'ok': True,
+            'created': created_count,
+            'redirect_url': redirect('dashboard_dresses').url,
+            'message': f'{created_count} dresses added successfully.',
+        })
+
+    return render(request, 'admin/add_multiple_dresses.html', {
+        'categories': categories,
+        'max_files': 30,
+        'max_file_size_mb': 12,
+    })
 
 
 # =========================================================
@@ -891,3 +991,77 @@ def register(request):
 class CustomLogoutView(LogoutView):
 
     next_page = 'login'
+
+# =========================================================
+# SHARE SELECTED DRESSES (LINK EXPIRES AFTER 24 HOURS)
+# =========================================================
+
+@login_required(login_url='login')
+def create_dress_share(request):
+    """Create a public, view-only gallery containing only selected dresses."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required.'}, status=405)
+
+    try:
+        payload = json.loads(request.body.decode('utf-8'))
+        raw_ids = payload.get('dress_ids', [])
+        if not isinstance(raw_ids, list):
+            raise ValueError
+        ids = list(dict.fromkeys(int(value) for value in raw_ids))
+    except (ValueError, TypeError, json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({'error': 'Invalid selection.'}, status=400)
+
+    if not ids:
+        return JsonResponse({'error': 'Select at least one dress photo.'}, status=400)
+    if len(ids) > 100:
+        return JsonResponse({'error': 'Please share no more than 100 photos at once.'}, status=400)
+
+    dresses = list(Dress.objects.filter(user=request.user, id__in=ids))
+    if len(dresses) != len(ids):
+        return JsonResponse({
+            'error': 'One or more selected dresses were not found in your collection.'
+        }, status=400)
+
+    share = DressShare.objects.create(
+        owner=request.user,
+        expires_at=timezone.now() + timedelta(hours=24),
+    )
+    share.dresses.set(dresses)
+    share_url = request.build_absolute_uri(
+        reverse('shared_dress_gallery', kwargs={'token': share.token})
+    )
+    return JsonResponse({
+        'url': share_url,
+        'expires_at': share.expires_at.isoformat(),
+        'count': len(dresses),
+    })
+
+
+def shared_dress_gallery(request, token):
+    """Public recipient page; the token grants view access for 24 hours."""
+    share = get_object_or_404(
+        DressShare.objects.prefetch_related('dresses__category'),
+        token=token,
+    )
+    if not share.is_active or share.is_expired:
+        return render(request, 'collection/share_expired.html', status=410)
+
+    dresses = share.dresses.all().order_by('-created_at')
+    if not dresses.exists():
+        return render(request, 'collection/share_expired.html', status=410)
+
+    return render(request, 'collection/shared_gallery.html', {
+        'share': share,
+        'dresses': dresses,
+    })
+
+
+@login_required(login_url='login')
+def revoke_dress_share(request, token):
+    """Allow the owner to disable a share before its expiry."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required.'}, status=405)
+    share = get_object_or_404(DressShare, token=token, owner=request.user)
+    share.is_active = False
+    share.save(update_fields=['is_active'])
+    return JsonResponse({'success': True})
