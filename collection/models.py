@@ -176,3 +176,42 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.dress.name}"
+
+# =========================================================
+# TEMPORARY VIEW-ONLY DRESS SHARES (24-HOUR EXPIRY)
+# =========================================================
+
+class DressShare(models.Model):
+    """A private selection of dresses exposed through a temporary share link."""
+
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='dress_shares'
+    )
+    token = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False
+    )
+    dresses = models.ManyToManyField(
+        Dress,
+        related_name='share_links'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['token', 'is_active']),
+        ]
+
+    @property
+    def is_expired(self):
+        from django.utils import timezone
+        return timezone.now() >= self.expires_at
+
+    def __str__(self):
+        return f"Dress share {self.token}"
