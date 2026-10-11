@@ -1,0 +1,238 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Dress Collection</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f7;
+            color: #222;
+        }
+
+        .container { max-width: 1100px; margin: auto; }
+
+        h1 { text-align: center; margin-bottom: 8px; }
+
+        .notice {
+            text-align: center;
+            color: #666;
+            margin-bottom: 28px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 12px #00000012;
+        }
+
+        .card img {
+            width: 100%;
+            height: 280px;
+            object-fit: contain;
+            background: #eee;
+            display: block;
+            cursor: zoom-in;
+        }
+
+        .details { padding: 14px; }
+        .details h3 { margin: 0 0 8px; }
+        .details p { margin: 5px 0; color: #666; }
+
+        /* Full-screen photo viewer */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.94);
+            align-items: center;
+            justify-content: center;
+            padding: 55px 65px;
+        }
+
+        .lightbox.active { display: flex; }
+
+        .lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            user-select: none;
+        }
+
+        .lightbox button {
+            position: absolute;
+            border: 0;
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 26px;
+        }
+
+        .lightbox button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .close-btn { top: 15px; right: 18px; }
+        .prev-btn { left: 12px; top: 50%; transform: translateY(-50%); }
+        .next-btn { right: 12px; top: 50%; transform: translateY(-50%); }
+
+        .photo-count {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 14px; }
+
+            .gallery {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .card img { height: 180px; }
+
+            .lightbox { padding: 55px 42px; }
+            .lightbox button { width: 38px; height: 38px; }
+            .prev-btn { left: 3px; }
+            .next-btn { right: 3px; }
+        }
+    </style>
+</head>
+
+<body>
+<main class="container">
+    <h1>Shared Dress Collection</h1>
+    <p class="notice">
+        This gallery is temporary and will expire after 24 hours.
+    </p>
+
+    <div class="gallery">
+        {% for dress in share.dresses.all %}
+            <article class="card">
+                {% if dress.photo %}
+                    <img
+                        src="{{ dress.photo.url }}"
+                        alt="{{ dress.name|default:'Dress' }}"
+                        class="gallery-photo"
+                        loading="lazy"
+                    >
+                {% endif %}
+
+                <div class="details">
+                    <h3>{{ dress.name|default:"Dress" }}</h3>
+
+                    {% if dress.category %}
+                        <p>Category: {{ dress.category.name }}</p>
+                    {% endif %}
+
+                    {% if dress.color %}
+                        <p>Color: {{ dress.color }}</p>
+                    {% endif %}
+
+                    {% if dress.size %}
+                        <p>Size: {{ dress.size }}</p>
+                    {% endif %}
+
+                    {% if dress.description %}
+                        <p>{{ dress.description }}</p>
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+            <p>No dresses are available in this shared collection.</p>
+        {% endfor %}
+    </div>
+</main>
+
+<div class="lightbox" id="lightbox" role="dialog"
+     aria-modal="true" aria-label="Photo viewer">
+    <button class="close-btn" id="closeLightbox"
+            aria-label="Close photo viewer">&times;</button>
+    <button class="prev-btn" id="prevPhoto"
+            aria-label="Previous photo">&#8249;</button>
+    <img id="lightboxImage" src="" alt="">
+    <button class="next-btn" id="nextPhoto"
+            aria-label="Next photo">&#8250;</button>
+    <div class="photo-count" id="photoCount"></div>
+</div>
+
+<script>
+(() => {
+    const photos = Array.from(document.querySelectorAll(".gallery-photo"));
+    const lightbox = document.getElementById("lightbox");
+    const viewerImage = document.getElementById("lightboxImage");
+    const counter = document.getElementById("photoCount");
+    let currentIndex = 0;
+
+    if (!photos.length) return;
+
+    function showPhoto(index) {
+        currentIndex = (index + photos.length) % photos.length;
+        viewerImage.src = photos[currentIndex].src;
+        viewerImage.alt = photos[currentIndex].alt || "Dress photo";
+        counter.textContent = `${currentIndex + 1} / ${photos.length}`;
+    }
+
+    function openViewer(index) {
+        showPhoto(index);
+        lightbox.classList.add("active");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeViewer() {
+        lightbox.classList.remove("active");
+        viewerImage.src = "";
+        document.body.style.overflow = "";
+    }
+
+    photos.forEach((photo, index) => {
+        photo.addEventListener("click", () => openViewer(index));
+    });
+
+    document.getElementById("closeLightbox")
+        .addEventListener("click", closeViewer);
+
+    document.getElementById("prevPhoto")
+        .addEventListener("click", () => showPhoto(currentIndex - 1));
+
+    document.getElementById("nextPhoto")
+        .addEventListener("click", () => showPhoto(currentIndex + 1));
+
+    lightbox.addEventListener("click", event => {
+        if (event.target === lightbox) closeViewer();
+    });
+
+    document.addEventListener("keydown", event => {
+        if (!lightbox.classList.contains("active")) return;
+
+        if (event.key === "Escape") closeViewer();
+        if (event.key === "ArrowLeft") showPhoto(currentIndex - 1);
+        if (event.key === "ArrowRight") showPhoto(currentIndex + 1);
+    });
+})();
+</script>
+</body>
+</html>
+```

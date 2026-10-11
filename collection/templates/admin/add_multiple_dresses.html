@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Multiple Dresses | Dress Collection</title>
+  <style>
+    :root{--ink:#171717;--muted:#737373;--line:#e5e7eb;--bg:#f6f7fb;--accent:#5145e5;--accent2:#4338ca;--green:#16a34a;--red:#dc2626}
+    *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    a{color:inherit;text-decoration:none}.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(4%,calc((100% - 1200px)/2));position:sticky;top:0;z-index:5}
+    .brand{font-weight:750;font-size:19px}.back{padding:10px 14px;border-radius:9px;background:#f1f1f5;font-weight:650;font-size:13px}
+    main{width:min(1180px,94%);margin:32px auto 60px}.heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px}.heading h1{font-size:clamp(25px,4vw,34px);margin:0 0 7px;letter-spacing:-.7px}.heading p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 6px 24px #10182808}.dropzone{border:2px dashed #b8b5ff;border-radius:14px;background:#fafaff;padding:28px 18px;text-align:center}.dropzone.drag{background:#f0efff;border-color:var(--accent)}.cloud{font-size:34px}.dropzone h2{font-size:17px;margin:8px 0}.dropzone p{font-size:13px;color:var(--muted);margin:0 0 15px}.btn{border:0;border-radius:9px;padding:12px 17px;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px}.primary{background:var(--accent);color:white}.primary:hover{background:var(--accent2)}.secondary{background:#f1f1f5;color:#222}.btn:disabled{opacity:.55;cursor:not-allowed}#fileInput{display:none}.helper{font-size:12px;color:var(--muted);margin-top:12px}
+    .selection-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 12px}.selection-row h2{font-size:18px;margin:0}.count{font-size:13px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.photo-card{border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0;position:relative;background:white}.photo-card img{width:100%;height:175px;object-fit:cover;border-radius:8px;background:#f3f4f6;display:block}.file-name{font-size:12px;color:#52525b;overflow-wrap:anywhere;margin:9px 0 10px;min-height:30px}.photo-card label{font-size:12px;font-weight:700;display:block;margin-bottom:6px}.photo-card select,.photo-card input[type="text"]{width:100%;min-height:42px;padding:8px;border:1px solid #d4d4d8;border-radius:8px;background:white;font-size:14px}.photo-card input[type="text"]{margin-bottom:10px}.remove{position:absolute;right:15px;top:15px;width:28px;height:28px;border:0;border-radius:50%;background:#fff;color:#333;box-shadow:0 1px 5px #0002;cursor:pointer;font-size:18px}.empty-state{padding:25px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.progress-panel{display:none}.progress-panel.show{display:block}.progress-heading{display:flex;justify-content:space-between;gap:12px;font-weight:700;font-size:14px;margin-bottom:11px}.track{height:11px;background:#e5e7eb;border-radius:99px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,#16a34a,#22c55e);transition:width .12s linear}.progress-meta{display:flex;justify-content:space-between;gap:12px;margin-top:9px;color:var(--muted);font-size:12px}.message{display:none;padding:12px 14px;border-radius:9px;margin-bottom:16px;font-size:13px}.message.show{display:block}.message.error{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}.message.success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px}.action-right{display:flex;gap:10px}.fineprint{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px}
+    @media(max-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.photo-card img{height:160px}}
+    @media(max-width:620px){.topbar{height:62px;padding:0 13px}.brand{font-size:16px}.back{padding:9px 10px;font-size:12px}main{width:calc(100% - 22px);margin:22px auto 40px}.panel{padding:14px;border-radius:13px}.heading{margin-bottom:16px}.dropzone{padding:23px 12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.photo-card{padding:8px}.photo-card img{height:145px}.remove{right:12px;top:12px}.actions{align-items:stretch;flex-direction:column}.action-right{display:grid;grid-template-columns:1fr 1fr}.actions>.secondary{width:100%}.progress-meta{font-size:11px}}
+  </style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="{% url 'admin_dashboard' %}">👗 Dress Collection</a><a class="back" href="{% url 'admin_dashboard' %}">← Dashboard</a></header>
+<main>
+  <div class="heading"><div><h1>Add Multiple Dresses</h1><p>Select several photos, assign a category to each dress, and save them together.</p></div></div>
+  <div id="message" class="message" role="status" aria-live="polite"></div>
+  <section class="panel">
+    <div class="dropzone" id="dropzone">
+      <div class="cloud">☁️</div><h2>Drag and drop your dress photos here</h2><p>Or choose multiple photos from your device</p>
+      <button type="button" class="btn primary" id="chooseBtn">＋ Choose Photos</button>
+      <input id="fileInput" type="file" accept=".jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif" multiple>
+      <div class="helper">JPG, PNG, WebP, HEIC and HEIF · Up to {{ max_files }} photos · 12 MB per photo</div>
+    </div>
+    <div class="selection-row"><h2>Selected photos</h2><span id="photoCount" class="count">0 photos selected</span></div>
+    <div id="photoGrid" class="grid"></div>
+    <div id="emptyState" class="empty-state">Your selected photo previews will appear here.</div>
+    <div class="fineprint">Each photo needs a category. Color is optional. Dress names are generated from the file names; size can be edited later.</div>
+  </section>
+  <section class="panel progress-panel" id="progressPanel" aria-live="polite">
+    <div class="progress-heading"><span id="progressTitle">Uploading photos...</span><span id="progressPercent">0%</span></div>
+    <div class="track" role="progressbar" aria-label="Photo upload progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressTrack"><div class="bar" id="progressBar"></div></div>
+    <div class="progress-meta"><span id="progressCount">Preparing upload...</span><span id="progressStatus">Please wait</span></div>
+  </section>
+  <div class="actions"><button type="button" id="clearBtn" class="btn secondary">Clear photos</button><div class="action-right"><a class="btn secondary" href="{% url 'dashboard_dresses' %}">Cancel</a><button type="button" id="saveBtn" class="btn primary" disabled>Save All Dresses →</button></div></div>
+</main>
+<script>
+(() => {
+  const input = document.getElementById('fileInput');
+  const chooseBtn = document.getElementById('chooseBtn');
+  const dropzone = document.getElementById('dropzone');
+  const grid = document.getElementById('photoGrid');
+  const emptyState = document.getElementById('emptyState');
+  const photoCount = document.getElementById('photoCount');
+  const saveBtn = document.getElementById('saveBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const message = document.getElementById('message');
+  const progressPanel = document.getElementById('progressPanel');
+  const progressBar = document.getElementById('progressBar');
+  const progressPercent = document.getElementById('progressPercent');
+  const progressCount = document.getElementById('progressCount');
+  const progressStatus = document.getElementById('progressStatus');
+  const progressTitle = document.getElementById('progressTitle');
+  const progressTrack = document.getElementById('progressTrack');
+  const maxFiles = {{ max_files }};
+  const maxBytes = {{ max_file_size_mb }} * 1024 * 1024;
+  const categories = [{% for category in categories %}{id: {{ category.id }}, name: "{{ category.name|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}];
+  let selectedFiles = [];
+  let uploading = false;
+  let previewUrls = [];
+
+  function showMessage(text, type='error') {
+    message.textContent = text;
+    message.className = `message show ${type}`;
+  }
+  function clearMessage() { message.textContent = ''; message.className = 'message'; }
+  function revokePreviews() { previewUrls.forEach(url => URL.revokeObjectURL(url)); previewUrls = []; }
+  function syncInputFiles() {
+    const transfer = new DataTransfer();
+    selectedFiles.forEach(item => transfer.items.add(item.file));
+    input.files = transfer.files;
+  }
+  function render() {
+    revokePreviews(); grid.innerHTML = '';
+    selectedFiles.forEach((item, index) => {
+      const card = document.createElement('article'); card.className = 'photo-card';
+      const img = document.createElement('img'); img.alt = item.file.name;
+      const isHeic = /\.(heic|heif)$/i.test(item.file.name);
+      if (!isHeic && item.file.type.startsWith('image/')) {
+        const url = URL.createObjectURL(item.file); previewUrls.push(url); img.src = url;
+      } else {
+        img.src = ''; img.style.objectFit = 'contain'; img.alt = 'Preview unavailable for this HEIC image';
+        img.style.background = '#f3f4f6';
+      }
+      const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'remove'; remove.textContent = '×'; remove.setAttribute('aria-label', `Remove ${item.file.name}`);
+      remove.addEventListener('click', () => { selectedFiles.splice(index, 1); syncInputFiles(); render(); clearMessage(); });
+      const filename = document.createElement('div'); filename.className = 'file-name'; filename.textContent = item.file.name;
+      const label = document.createElement('label'); label.textContent = 'Category'; label.htmlFor = `category-${index}`;
+      const select = document.createElement('select'); select.id = `category-${index}`; select.dataset.index = String(index); select.required = true;
+      const placeholder = document.createElement('option'); placeholder.value = ''; placeholder.textContent = 'Choose category'; select.appendChild(placeholder);
+      categories.forEach(category => { const option = document.createElement('option'); option.value = String(category.id); option.textContent = category.name; if (item.categoryId === String(category.id)) option.selected = true; select.appendChild(option); });
+      select.addEventListener('change', () => { selectedFiles[index].categoryId = select.value; updateSaveState(); });
+      const colorLabel = document.createElement('label'); colorLabel.textContent = 'Color (optional)'; colorLabel.htmlFor = `color-${index}`;
+      const colorInput = document.createElement('input'); colorInput.type = 'text'; colorInput.id = `color-${index}`; colorInput.placeholder = 'e.g. Black, Blue'; colorInput.maxLength = 50; colorInput.value = item.color || '';
+      colorInput.addEventListener('input', () => { selectedFiles[index].color = colorInput.value; });
+      card.append(img, remove, filename, label, select, colorLabel, colorInput); grid.appendChild(card);
+    });
+    emptyState.style.display = selectedFiles.length ? 'none' : 'block';
+    photoCount.textContent = `${selectedFiles.length} photo${selectedFiles.length === 1 ? '' : 's'} selected`;
+    chooseBtn.disabled = uploading; clearBtn.disabled = uploading; input.disabled = uploading;
+    updateSaveState();
+  }
+  function updateSaveState() { saveBtn.disabled = uploading || selectedFiles.length === 0 || selectedFiles.some(item => !item.categoryId); }
+  function addFiles(fileList) {
+    clearMessage();
+    const incoming = Array.from(fileList || []);
+    if (!incoming.length) return;
+    const allowed = /\.(jpg|jpeg|png|webp|heic|heif)$/i;
+    for (const file of incoming) {
+      if (!allowed.test(file.name)) { showMessage(`${file.name}: unsupported file type.`); continue; }
+      if (file.size > maxBytes) { showMessage(`${file.name}: file exceeds {{ max_file_size_mb }} MB.`); continue; }
+      if (selectedFiles.some(item => item.file.name === file.name && item.file.size === file.size && item.file.lastModified === file.lastModified)) continue;
+      if (selectedFiles.length >= maxFiles) { showMessage(`You can select up to ${maxFiles} photos at a time.`); break; }
+      selectedFiles.push({file, categoryId: '', color: ''});
+    }
+    syncInputFiles(); render();
+  }
+  chooseBtn.addEventListener('click', () => input.click());
+  input.addEventListener('change', event => { addFiles(event.target.files); input.value = ''; syncInputFiles(); });
+  ['dragenter','dragover'].forEach(name => dropzone.addEventListener(name, event => { event.preventDefault(); dropzone.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(name => dropzone.addEventListener(name, event => { event.preventDefault(); dropzone.classList.remove('drag'); }));
+  dropzone.addEventListener('drop', event => addFiles(event.dataTransfer.files));
+  clearBtn.addEventListener('click', () => { if (uploading) return; selectedFiles = []; syncInputFiles(); render(); clearMessage(); });
+
+  saveBtn.addEventListener('click', () => {
+    if (uploading || !selectedFiles.length) return;
+    if (selectedFiles.some(item => !item.categoryId)) { showMessage('Please select a category for every photo.'); return; }
+    clearMessage(); uploading = true; render(); progressPanel.classList.add('show');
+    progressBar.style.width = '0%'; progressPercent.textContent = '0%'; progressCount.textContent = `0 of ${selectedFiles.length} photos sent`; progressStatus.textContent = 'Uploading'; progressTitle.textContent = 'Uploading photos...';
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    selectedFiles.forEach((item, index) => { formData.append('photos', item.file, item.file.name); formData.append(`category_${index}`, item.categoryId); formData.append(`color_${index}`, (item.color || '').trim()); });
+    const xhr = new XMLHttpRequest(); xhr.open('POST', window.location.href); xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.upload.addEventListener('progress', event => {
+      if (!event.lengthComputable) return;
+      const percent = Math.min(99, Math.round((event.loaded / event.total) * 100));
+      progressBar.style.width = `${percent}%`; progressPercent.textContent = `${percent}%`; progressTrack.setAttribute('aria-valuenow', String(percent));
+      progressCount.textContent = `${Math.min(selectedFiles.length, Math.floor(selectedFiles.length * percent / 100))} of ${selectedFiles.length} photos sent`;
+      progressStatus.textContent = 'Uploading';
+    });
+    xhr.addEventListener('load', () => {
+      let data; try { data = JSON.parse(xhr.responseText); } catch { data = null; }
+      if (xhr.status >= 200 && xhr.status < 300 && data && data.ok) {
+        progressBar.style.width = '100%'; progressPercent.textContent = '100%'; progressTrack.setAttribute('aria-valuenow','100'); progressCount.textContent = `${data.created} of ${data.created} photos saved`; progressStatus.textContent = 'Complete'; progressTitle.textContent = 'Upload complete';
+        showMessage(data.message, 'success'); saveBtn.textContent = 'Saved ✓';
+        window.setTimeout(() => { window.location.href = data.redirect_url; }, 900);
+      } else {
+        uploading = false; render(); progressStatus.textContent = 'Failed'; progressTitle.textContent = 'Upload could not be completed';
+        showMessage(data && data.error ? data.error : 'Upload failed. Please try again.');
+      }
+    });
+    xhr.addEventListener('error', () => { uploading = false; render(); progressStatus.textContent = 'Network error'; showMessage('A network error interrupted the upload. Please try again.'); });
+    xhr.addEventListener('abort', () => { uploading = false; render(); showMessage('Upload was cancelled.'); });
+    xhr.send(formData);
+  });
+  render();
+})();
+</script>
+</body>
+</html>
