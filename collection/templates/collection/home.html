@@ -829,6 +829,174 @@
         }
 
 
+
+        /* =====================================================
+           MULTIPLE UPLOAD + SHARE SELECTION
+        ===================================================== */
+        .collection-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px auto 0;
+        }
+
+        .collection-action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 12px 18px;
+            border: 1px solid #111;
+            border-radius: 9px;
+            background: #111;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 650;
+            transition: .2s ease;
+        }
+
+        .collection-action-btn.secondary {
+            background: #fff;
+            color: #111;
+        }
+
+        .collection-action-btn:hover {
+            transform: translateY(-1px);
+            background: #333;
+            color: #fff;
+        }
+
+        .share-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin: 0 0 18px;
+            padding: 15px 18px;
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+        }
+
+        .share-toolbar p {
+            color: #555;
+            font-size: 13px;
+        }
+
+        .share-toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .share-select-btn {
+            min-height: 40px;
+            padding: 9px 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            color: #222;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .share-select-btn.primary {
+            border-color: #111;
+            background: #111;
+            color: #fff;
+        }
+
+        .share-select-btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .dress-select-label {
+            position: absolute;
+            z-index: 30;
+            top: 13px;
+            left: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border: 1px solid rgba(0,0,0,.12);
+            border-radius: 8px;
+            background: rgba(255,255,255,.96);
+            color: #222;
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
+            cursor: pointer;
+        }
+
+        .dress-select-label input {
+            width: 16px;
+            height: 16px;
+            accent-color: #111;
+        }
+
+        .share-result {
+            display: none;
+            margin: 0 0 22px;
+            padding: 15px;
+            border: 1px solid #cde8d4;
+            border-radius: 10px;
+            background: #f2fbf4;
+            color: #174c2a;
+            overflow-wrap: anywhere;
+        }
+
+        .share-result.visible {
+            display: block;
+        }
+
+        .share-result a {
+            color: #174c2a;
+            font-weight: 650;
+        }
+
+        .share-error {
+            color: #b42318 !important;
+        }
+
+        @media (max-width: 700px) {
+            .collection-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .collection-action-btn {
+                width: 100%;
+            }
+
+            .share-toolbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .share-toolbar-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .share-select-btn {
+                width: 100%;
+            }
+
+            .dress-select-label {
+                top: 10px;
+                left: 10px;
+                padding: 6px 8px;
+            }
+        }
+
         /* =====================================================
            DRESS GRID
         ===================================================== */
@@ -2061,7 +2229,14 @@
 
         </div>
 
-
+        <div class="collection-actions">
+            <a class="collection-action-btn" href="{% url 'add_multiple_dresses' %}">
+                ＋ Add Multiple Dresses
+            </a>
+            <a class="collection-action-btn secondary" href="{% url 'add_dress' %}">
+                ＋ Add Single Dress
+            </a>
+        </div>
 
         <!-- =================================================
              FILTERS
@@ -2232,6 +2407,21 @@
 
 
         <!-- =================================================
+             SHARE SELECTED PHOTOS
+        ================================================= -->
+        <div class="share-toolbar">
+            <p><strong id="selectedDressCount">0 photos selected</strong><br>
+                Select photos below to create a view-only link that expires after 24 hours.
+            </p>
+            <div class="share-toolbar-actions">
+                <button type="button" class="share-select-btn" id="selectVisibleDresses">Select visible</button>
+                <button type="button" class="share-select-btn" id="clearDressSelection">Clear selection</button>
+                <button type="button" class="share-select-btn primary" id="createShareLink" disabled>Share selected</button>
+            </div>
+        </div>
+        <div class="share-result" id="shareResult" role="status" aria-live="polite"></div>
+
+        <!-- =================================================
              DRESS GRID
         ================================================= -->
 
@@ -2261,6 +2451,17 @@
                         <!-- IMAGE -->
 
                         <div class="dress-image-wrapper">
+
+                            <label class="dress-select-label" onclick="event.stopPropagation();">
+                                <input
+                                    type="checkbox"
+                                    class="dress-share-checkbox"
+                                    value="{{ dress.id }}"
+                                    aria-label="Select {{ dress.name }} to share"
+                                    onclick="event.stopPropagation();"
+                                >
+                                Select
+                            </label>
 
                             <form
                                 method="POST"
@@ -2651,6 +2852,122 @@
         }
 
 
+
+
+        /* =====================================================
+           MULTIPLE PHOTO SELECTION + TEMPORARY SHARE LINKS
+        ===================================================== */
+        (function () {
+            const checkboxes = Array.from(document.querySelectorAll(".dress-share-checkbox"));
+            const countLabel = document.getElementById("selectedDressCount");
+            const shareButton = document.getElementById("createShareLink");
+            const selectVisibleButton = document.getElementById("selectVisibleDresses");
+            const clearButton = document.getElementById("clearDressSelection");
+            const resultBox = document.getElementById("shareResult");
+
+            function selectedIds() {
+                return checkboxes.filter(box => box.checked).map(box => box.value);
+            }
+
+            function updateSelection() {
+                const count = selectedIds().length;
+                countLabel.textContent = `${count} photo${count === 1 ? "" : "s"} selected`;
+                shareButton.disabled = count === 0;
+            }
+
+            function getCookie(name) {
+                const cookieValue = document.cookie
+                    .split("; ")
+                    .find(row => row.startsWith(name + "="));
+                return cookieValue ? decodeURIComponent(cookieValue.split("=").slice(1).join("=")) : "";
+            }
+
+            checkboxes.forEach(box => {
+                box.addEventListener("change", updateSelection);
+            });
+
+            selectVisibleButton.addEventListener("click", function () {
+                const cards = Array.from(document.querySelectorAll("#dressGrid .dress-card"));
+                cards.forEach(card => {
+                    if (card.offsetParent !== null) {
+                        const box = card.querySelector(".dress-share-checkbox");
+                        if (box) box.checked = true;
+                    }
+                });
+                updateSelection();
+            });
+
+            clearButton.addEventListener("click", function () {
+                checkboxes.forEach(box => { box.checked = false; });
+                updateSelection();
+                resultBox.classList.remove("visible");
+                resultBox.innerHTML = "";
+            });
+
+            shareButton.addEventListener("click", async function () {
+                const ids = selectedIds();
+                if (!ids.length) return;
+
+                shareButton.disabled = true;
+                shareButton.textContent = "Creating link…";
+                resultBox.classList.add("visible");
+                resultBox.classList.remove("share-error");
+                resultBox.textContent = "Creating your temporary gallery link…";
+
+                try {
+                    const response = await fetch("{% url 'create_dress_share' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": getCookie("csrftoken"),
+                            "X-Requested-With": "XMLHttpRequest"
+                        },
+                        credentials: "same-origin",
+                        body: JSON.stringify({ dress_ids: ids })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || "Could not create the share link.");
+
+                    resultBox.innerHTML = "";
+                    const message = document.createElement("p");
+                    message.textContent = `Gallery created with ${data.count} photo(s). This link expires in 24 hours:`;
+                    const link = document.createElement("a");
+                    link.href = data.url;
+                    link.target = "_blank";
+                    link.rel = "noopener noreferrer";
+                    link.textContent = data.url;
+                    link.style.display = "block";
+                    link.style.margin = "8px 0 12px";
+                    const copyButton = document.createElement("button");
+                    copyButton.type = "button";
+                    copyButton.className = "share-select-btn primary";
+                    copyButton.textContent = "Copy share link";
+                    copyButton.addEventListener("click", async function () {
+                        try {
+                            await navigator.clipboard.writeText(data.url);
+                            copyButton.textContent = "Copied!";
+                        } catch (error) {
+                            const temporaryInput = document.createElement("input");
+                            temporaryInput.value = data.url;
+                            document.body.appendChild(temporaryInput);
+                            temporaryInput.select();
+                            document.execCommand("copy");
+                            temporaryInput.remove();
+                            copyButton.textContent = "Copied!";
+                        }
+                    });
+                    resultBox.append(message, link, copyButton);
+                } catch (error) {
+                    resultBox.classList.add("share-error");
+                    resultBox.textContent = error.message || "Something went wrong. Please try again.";
+                } finally {
+                    shareButton.textContent = "Share selected";
+                    updateSelection();
+                }
+            });
+
+            updateSelection();
+        })();
 
         /* =====================================================
            KEYBOARD SUPPORT

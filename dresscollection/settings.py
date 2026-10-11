@@ -10,7 +10,8 @@ import os
 from dotenv import load_dotenv
 
 import dj_database_url
-
+from pillow_heif import register_heif_opener
+register_heif_opener()
 # =========================================================
 # BASE DIRECTORY
 # =========================================================

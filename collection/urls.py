@@ -7,6 +7,23 @@ from . import views
 urlpatterns = [
 
     path(
+        'share/create/',
+        views.create_dress_share,
+        name='create_dress_share'
+    ),
+    path(
+        'share/<uuid:token>/',
+        views.shared_dress_gallery,
+        name='shared_dress_gallery'
+    ),
+    path(
+        'share/<uuid:token>/revoke/',
+        views.revoke_dress_share,
+        name='revoke_dress_share'
+    ),
+
+
+    path(
         '',
         views.home,
         name='home'
@@ -46,6 +63,12 @@ urlpatterns = [
         'dashboard/dresses/add/',
         views.add_dress,
         name='add_dress'
+    ),
+
+    path(
+        'dashboard/dresses/add-multiple/',
+        views.add_multiple_dresses,
+        name='add_multiple_dresses'
     ),
 
     path(
