@@ -992,7 +992,7 @@
 
 
                             <span>
-                                JPG, JPEG, PNG or WEBP
+                                JPG, PNG, WebP, HEIC or HEIF · Up to 12 MB
                             </span>
 
 
@@ -1072,6 +1072,7 @@
         IMAGE PREVIEW
     ========================= -->
 
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <script>
         const photoInput = document.getElementById(
             "{{ form.photo.id_for_label }}"
@@ -1113,110 +1114,69 @@
         PHOTO PREVIEW
         ========================================== */
 
-        photoInput.addEventListener("change", function () {
+        photoInput.addEventListener("change", async function () {
+            const file = this.files && this.files[0];
 
-            const file = this.files[0];
+            previewContainer.classList.remove("active");
+            previewImage.removeAttribute("src");
+            previewName.textContent = "";
 
-            if (!file) {
-
-                previewContainer.classList.remove("active");
-
-                previewImage.src = "";
-
-                previewName.textContent = "";
-
-                return;
-            }
-
-
-            const allowedTypes = [
-                "image/jpeg",
-                "image/png",
-                "image/webp",
-                "image/heic",
-                "image/heif"
-            ];
+            if (!file) return;
 
             const fileName = file.name.toLowerCase();
+            const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"];
+            const validExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
 
-            const allowedExtensions = [
-                ".jpg",
-                ".jpeg",
-                ".png",
-                ".webp",
-                ".heic",
-                ".heif"
-            ];
-
-            const validType =
-                allowedTypes.includes(file.type) ||
-                allowedExtensions.some(ext => fileName.endsWith(ext));
-
-            if (!validType) {
-
-                alert(
-                    "Please select a JPG, PNG, WEBP, HEIC or HEIF image."
-                );
-
+            if (!validExtension) {
+                alert("Please select a JPG, PNG, WebP, HEIC or HEIF image.");
                 this.value = "";
-
-                previewContainer.classList.remove("active");
-
                 return;
             }
 
-
-            const maxSize = 5 * 1024 * 1024;
-
-
+            const maxSize = 12 * 1024 * 1024;
             if (file.size > maxSize) {
-
-                alert(
-                    "Image size must be less than 5 MB."
-                );
-
+                alert("Image size must be 12 MB or less.");
                 this.value = "";
-
-                previewContainer.classList.remove("active");
-
                 return;
             }
 
+            try {
+                let previewBlob = file;
 
-            const reader = new FileReader();
+                if (/\.(heic|heif)$/i.test(file.name)) {
+                    if (typeof window.heic2any !== "function") {
+                        throw new Error("HEIC preview converter did not load. Check your internet connection and try again.");
+                    }
 
+                    const converted = await window.heic2any({
+                        blob: file,
+                        toType: "image/jpeg",
+                        quality: 0.82
+                    });
+                    previewBlob = Array.isArray(converted) ? converted[0] : converted;
+                }
 
-            reader.onload = function (event) {
+                const previewUrl = URL.createObjectURL(previewBlob);
+                const previousUrl = previewImage.dataset.previewUrl;
+                if (previousUrl) URL.revokeObjectURL(previousUrl);
+                previewImage.dataset.previewUrl = previewUrl;
 
-                previewImage.src =
-                    event.target.result;
-
-                previewName.textContent =
-                    file.name;
-
-                previewContainer.classList.add(
-                    "active"
-                );
-            };
-
-
-            reader.onerror = function () {
-
-                alert(
-                    "Unable to read this image. " +
-                    "Please select it again."
-                );
-
-                photoInput.value = "";
-
-                previewContainer.classList.remove(
-                    "active"
-                );
-            };
-
-
-            reader.readAsDataURL(file);
-
+                previewImage.onload = function () {
+                    previewContainer.classList.add("active");
+                };
+                previewImage.onerror = function () {
+                    previewContainer.classList.remove("active");
+                    alert("This image could not be previewed. You can still try uploading it.");
+                };
+                previewImage.src = previewUrl;
+                previewName.textContent = file.name;
+            } catch (error) {
+                console.error("Image preview error:", error);
+                previewContainer.classList.remove("active");
+                alert(error && error.message
+                    ? error.message
+                    : "Could not preview this image. Please try another file.");
+            }
         });
     </script>
 </body>

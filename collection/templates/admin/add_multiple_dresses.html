@@ -40,6 +40,7 @@
   </section>
   <div class="actions"><button type="button" id="clearBtn" class="btn secondary">Clear photos</button><div class="action-right"><a class="btn secondary" href="{% url 'dashboard_dresses' %}">Cancel</a><button type="button" id="saveBtn" class="btn primary" disabled>Save All Dresses →</button></div></div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <script>
 (() => {
   const input = document.getElementById('fileInput');
@@ -77,33 +78,120 @@
     input.files = transfer.files;
   }
   function render() {
-    revokePreviews(); grid.innerHTML = '';
+    revokePreviews();
+    grid.innerHTML = '';
+
     selectedFiles.forEach((item, index) => {
-      const card = document.createElement('article'); card.className = 'photo-card';
-      const img = document.createElement('img'); img.alt = item.file.name;
+      const card = document.createElement('article');
+      card.className = 'photo-card';
+
+      const img = document.createElement('img');
+      img.alt = item.file.name;
+      img.style.objectFit = 'cover';
+
       const isHeic = /\.(heic|heif)$/i.test(item.file.name);
       if (!isHeic && item.file.type.startsWith('image/')) {
-        const url = URL.createObjectURL(item.file); previewUrls.push(url); img.src = url;
-      } else {
-        img.src = ''; img.style.objectFit = 'contain'; img.alt = 'Preview unavailable for this HEIC image';
+        const url = URL.createObjectURL(item.file);
+        previewUrls.push(url);
+        img.src = url;
+      } else if (isHeic) {
+        img.style.objectFit = 'contain';
+        img.alt = 'Converting HEIC preview';
         img.style.background = '#f3f4f6';
+
+        if (typeof window.heic2any !== 'function') {
+          img.alt = 'HEIC preview converter unavailable';
+          img.title = 'HEIC preview converter could not load. The original file can still be uploaded.';
+        } else {
+          window.heic2any({
+            blob: item.file,
+            toType: 'image/jpeg',
+            quality: 0.78
+          }).then(converted => {
+            if (!card.isConnected) return;
+            const blob = Array.isArray(converted) ? converted[0] : converted;
+            const url = URL.createObjectURL(blob);
+            previewUrls.push(url);
+            img.src = url;
+            img.alt = item.file.name;
+          }).catch(error => {
+            console.error('HEIC preview conversion failed:', error);
+            if (card.isConnected) {
+              img.alt = 'Preview unavailable; original HEIC will be uploaded';
+              img.title = 'Preview conversion failed. You can still try uploading this file.';
+            }
+          });
+        }
+      } else {
+        img.alt = 'Preview unavailable';
       }
-      const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'remove'; remove.textContent = '×'; remove.setAttribute('aria-label', `Remove ${item.file.name}`);
-      remove.addEventListener('click', () => { selectedFiles.splice(index, 1); syncInputFiles(); render(); clearMessage(); });
-      const filename = document.createElement('div'); filename.className = 'file-name'; filename.textContent = item.file.name;
-      const label = document.createElement('label'); label.textContent = 'Category'; label.htmlFor = `category-${index}`;
-      const select = document.createElement('select'); select.id = `category-${index}`; select.dataset.index = String(index); select.required = true;
-      const placeholder = document.createElement('option'); placeholder.value = ''; placeholder.textContent = 'Choose category'; select.appendChild(placeholder);
-      categories.forEach(category => { const option = document.createElement('option'); option.value = String(category.id); option.textContent = category.name; if (item.categoryId === String(category.id)) option.selected = true; select.appendChild(option); });
-      select.addEventListener('change', () => { selectedFiles[index].categoryId = select.value; updateSaveState(); });
-      const colorLabel = document.createElement('label'); colorLabel.textContent = 'Color (optional)'; colorLabel.htmlFor = `color-${index}`;
-      const colorInput = document.createElement('input'); colorInput.type = 'text'; colorInput.id = `color-${index}`; colorInput.placeholder = 'e.g. Black, Blue'; colorInput.maxLength = 50; colorInput.value = item.color || '';
-      colorInput.addEventListener('input', () => { selectedFiles[index].color = colorInput.value; });
-      card.append(img, remove, filename, label, select, colorLabel, colorInput); grid.appendChild(card);
+
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'remove';
+      remove.textContent = '×';
+      remove.setAttribute('aria-label', `Remove ${item.file.name}`);
+      remove.addEventListener('click', () => {
+        selectedFiles.splice(index, 1);
+        syncInputFiles();
+        render();
+        clearMessage();
+      });
+
+      const filename = document.createElement('div');
+      filename.className = 'file-name';
+      filename.textContent = item.file.name;
+
+      const label = document.createElement('label');
+      label.textContent = 'Category';
+      label.htmlFor = `category-${index}`;
+
+      const select = document.createElement('select');
+      select.id = `category-${index}`;
+      select.dataset.index = String(index);
+      select.required = true;
+
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = 'Choose category';
+      select.appendChild(placeholder);
+
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = String(category.id);
+        option.textContent = category.name;
+        if (item.categoryId === String(category.id)) option.selected = true;
+        select.appendChild(option);
+      });
+
+      select.addEventListener('change', () => {
+        selectedFiles[index].categoryId = select.value;
+        updateSaveState();
+      });
+
+      const colorLabel = document.createElement('label');
+      colorLabel.textContent = 'Color (optional)';
+      colorLabel.htmlFor = `color-${index}`;
+
+      const colorInput = document.createElement('input');
+      colorInput.type = 'text';
+      colorInput.id = `color-${index}`;
+      colorInput.placeholder = 'e.g. Black, Blue';
+      colorInput.maxLength = 50;
+      colorInput.value = item.color || '';
+      colorInput.addEventListener('input', () => {
+        selectedFiles[index].color = colorInput.value;
+      });
+
+      card.append(img, remove, filename, label, select, colorLabel, colorInput);
+      grid.appendChild(card);
     });
+
     emptyState.style.display = selectedFiles.length ? 'none' : 'block';
     photoCount.textContent = `${selectedFiles.length} photo${selectedFiles.length === 1 ? '' : 's'} selected`;
-    chooseBtn.disabled = uploading; clearBtn.disabled = uploading; input.disabled = uploading;
+    chooseBtn.disabled = uploading;
+    clearBtn.disabled = uploading;
+    input.disabled = uploading;
     updateSaveState();
   }
   function updateSaveState() { saveBtn.disabled = uploading || selectedFiles.length === 0 || selectedFiles.some(item => !item.categoryId); }
@@ -128,36 +216,115 @@
   dropzone.addEventListener('drop', event => addFiles(event.dataTransfer.files));
   clearBtn.addEventListener('click', () => { if (uploading) return; selectedFiles = []; syncInputFiles(); render(); clearMessage(); });
 
-  saveBtn.addEventListener('click', () => {
+  saveBtn.addEventListener('click', async () => {
     if (uploading || !selectedFiles.length) return;
-    if (selectedFiles.some(item => !item.categoryId)) { showMessage('Please select a category for every photo.'); return; }
-    clearMessage(); uploading = true; render(); progressPanel.classList.add('show');
-    progressBar.style.width = '0%'; progressPercent.textContent = '0%'; progressCount.textContent = `0 of ${selectedFiles.length} photos sent`; progressStatus.textContent = 'Uploading'; progressTitle.textContent = 'Uploading photos...';
-    const formData = new FormData();
-    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-    selectedFiles.forEach((item, index) => { formData.append('photos', item.file, item.file.name); formData.append(`category_${index}`, item.categoryId); formData.append(`color_${index}`, (item.color || '').trim()); });
-    const xhr = new XMLHttpRequest(); xhr.open('POST', window.location.href); xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    xhr.upload.addEventListener('progress', event => {
-      if (!event.lengthComputable) return;
-      const percent = Math.min(99, Math.round((event.loaded / event.total) * 100));
-      progressBar.style.width = `${percent}%`; progressPercent.textContent = `${percent}%`; progressTrack.setAttribute('aria-valuenow', String(percent));
-      progressCount.textContent = `${Math.min(selectedFiles.length, Math.floor(selectedFiles.length * percent / 100))} of ${selectedFiles.length} photos sent`;
-      progressStatus.textContent = 'Uploading';
-    });
-    xhr.addEventListener('load', () => {
-      let data; try { data = JSON.parse(xhr.responseText); } catch { data = null; }
-      if (xhr.status >= 200 && xhr.status < 300 && data && data.ok) {
-        progressBar.style.width = '100%'; progressPercent.textContent = '100%'; progressTrack.setAttribute('aria-valuenow','100'); progressCount.textContent = `${data.created} of ${data.created} photos saved`; progressStatus.textContent = 'Complete'; progressTitle.textContent = 'Upload complete';
-        showMessage(data.message, 'success'); saveBtn.textContent = 'Saved ✓';
-        window.setTimeout(() => { window.location.href = data.redirect_url; }, 900);
-      } else {
-        uploading = false; render(); progressStatus.textContent = 'Failed'; progressTitle.textContent = 'Upload could not be completed';
-        showMessage(data && data.error ? data.error : 'Upload failed. Please try again.');
+    if (selectedFiles.some(item => !item.categoryId)) {
+      showMessage('Please select a category for every photo.');
+      return;
+    }
+
+    const filesToUpload = selectedFiles.slice();
+    const batchSize = 2; // At most 2 originals (up to 24 MB) per request.
+    clearMessage();
+    uploading = true;
+    render();
+    progressPanel.classList.add('show');
+    progressBar.style.width = '0%';
+    progressPercent.textContent = '0%';
+    progressTrack.setAttribute('aria-valuenow', '0');
+    progressCount.textContent = `0 of ${filesToUpload.length} photos saved`;
+    progressStatus.textContent = 'Preparing';
+    progressTitle.textContent = 'Uploading photos...';
+
+    let savedCount = 0;
+
+    function updateProgress(percent, statusText) {
+      const overall = Math.min(99, Math.round(
+        ((savedCount + percent / 100 * Math.min(batchSize, filesToUpload.length - savedCount)) /
+          filesToUpload.length) * 100
+      ));
+      progressBar.style.width = `${overall}%`;
+      progressPercent.textContent = `${overall}%`;
+      progressTrack.setAttribute('aria-valuenow', String(overall));
+      progressCount.textContent = `${savedCount} of ${filesToUpload.length} photos saved`;
+      progressStatus.textContent = statusText;
+    }
+
+    async function uploadBatch(batch) {
+      const formData = new FormData();
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+      batch.forEach((item, index) => {
+        formData.append('photos', item.file, item.file.name);
+        formData.append(`category_${index}`, item.categoryId);
+        formData.append(`color_${index}`, (item.color || '').trim());
+      });
+
+      return await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', window.location.href);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.timeout = 120000;
+
+        xhr.upload.addEventListener('progress', event => {
+          if (!event.lengthComputable) return;
+          updateProgress(Math.round((event.loaded / event.total) * 100), 'Uploading');
+        });
+
+        xhr.addEventListener('load', () => {
+          let data;
+          try { data = JSON.parse(xhr.responseText); } catch { data = null; }
+
+          if (xhr.status >= 200 && xhr.status < 300 && data && data.ok) {
+            resolve(data);
+          } else {
+            const detail = data && data.error
+              ? data.error
+              : `The server returned HTTP ${xhr.status || 'unknown'}.`;
+            reject(new Error(detail));
+          }
+        });
+
+        xhr.addEventListener('error', () => reject(
+          new Error('The connection was interrupted. Check your connection and server logs, then retry the remaining photos.')
+        ));
+        xhr.addEventListener('timeout', () => reject(
+          new Error('This upload batch took too long. Try fewer or smaller photos.')
+        ));
+        xhr.addEventListener('abort', () => reject(new Error('Upload was cancelled.')));
+        xhr.send(formData);
+      });
+    }
+
+    try {
+      for (let start = 0; start < filesToUpload.length; start += batchSize) {
+        const batch = filesToUpload.slice(start, start + batchSize);
+        progressStatus.textContent = `Uploading batch ${Math.floor(start / batchSize) + 1}`;
+        await uploadBatch(batch);
+        savedCount += batch.length;
+
+        // Remove successfully saved items so a later retry won't upload them again.
+        selectedFiles.splice(0, batch.length);
+        syncInputFiles();
+        render();
+        updateProgress(100, 'Saved');
       }
-    });
-    xhr.addEventListener('error', () => { uploading = false; render(); progressStatus.textContent = 'Network error'; showMessage('A network error interrupted the upload. Please try again.'); });
-    xhr.addEventListener('abort', () => { uploading = false; render(); showMessage('Upload was cancelled.'); });
-    xhr.send(formData);
+
+      progressBar.style.width = '100%';
+      progressPercent.textContent = '100%';
+      progressTrack.setAttribute('aria-valuenow', '100');
+      progressCount.textContent = `${savedCount} of ${savedCount} photos saved`;
+      progressStatus.textContent = 'Complete';
+      progressTitle.textContent = 'Upload complete';
+      showMessage(`${savedCount} dresses added successfully.`, 'success');
+      saveBtn.textContent = 'Saved ✓';
+      window.location.href = '{{ dashboard_dresses_url|default:"/dashboard/dresses/" }}';
+    } catch (error) {
+      uploading = false;
+      render();
+      progressStatus.textContent = 'Failed';
+      progressTitle.textContent = 'Upload could not be completed';
+      showMessage(`${savedCount} photo(s) saved. ${error.message} Remaining photos are still selected; please retry those.`, 'error');
+    }
   });
   render();
 })();
